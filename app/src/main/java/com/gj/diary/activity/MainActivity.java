@@ -2,12 +2,11 @@ package com.gj.diary.activity;
 
 import android.Manifest;
 import android.app.Activity;
-import android.app.ProgressDialog;
+import android.app.Dialog;
 import android.content.ContentResolver;
 import android.content.Context;
 import android.content.Intent;
 import android.content.pm.PackageManager;
-import android.content.res.Resources;
 import android.database.Cursor;
 import android.graphics.Bitmap;
 import android.graphics.BitmapFactory;
@@ -18,9 +17,10 @@ import android.graphics.PorterDuff;
 import android.graphics.PorterDuffXfermode;
 import android.graphics.Rect;
 import android.graphics.RectF;
-import android.graphics.drawable.BitmapDrawable;
 import android.net.Uri;
 import android.os.Environment;
+import android.os.Handler;
+import android.os.Message;
 import android.provider.MediaStore;
 import android.support.v4.app.ActivityCompat;
 import android.support.v7.app.AppCompatActivity;
@@ -39,10 +39,10 @@ import android.app.DatePickerDialog;
 import android.widget.DatePicker;
 
 import com.gj.diary.R;
+import com.gj.diary.utils.DialogUtils;
 import com.gj.diary.utils.ImageUtil;
 
 import java.io.File;
-import java.io.InputStream;
 import java.text.SimpleDateFormat;
 import java.util.Calendar;
 import java.util.Date;
@@ -54,11 +54,11 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
             Manifest.permission.READ_EXTERNAL_STORAGE,
             Manifest.permission.WRITE_EXTERNAL_STORAGE};
 
-    private static File sdcardDir = Environment.getExternalStorageDirectory();
+    private static File rootDir;
 
     private static final String TAG = "MainActivity";
     private static final String IMAGE_UNSPECIFIED = "image/*";
-    private static final String FILE_PATH = "/diary/";
+    private static final String FILE_PATH = "/diary/日记/picture/";
 
     private static String diaryStartText = "\t\t\t\t这张照片还记得吗？这一天是[date],";
     private static SimpleDateFormat sdf = new SimpleDateFormat("yyyy年MM月dd日");
@@ -76,6 +76,39 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
     private String picturePath;
     private ImageView diaryPicture;
 
+    private Dialog loadDialog;
+
+    //定义Handler对象
+    private Handler handler =new Handler(){
+        @Override
+        //当有消息发送出来的时候就执行Handler的这个方法
+        public void handleMessage(Message msg){
+            super.handleMessage(msg);
+            //只要执行到这里就关闭对话框
+            DialogUtils.closeDialog(loadDialog);
+            switch (msg.what) {
+                case 0:
+                    Toast.makeText(MainActivity.this, "日记生成完成", Toast.LENGTH_SHORT).show();
+                    break;
+                case 1:
+                    Toast.makeText(MainActivity.this, "日记已经存在", Toast.LENGTH_SHORT).show();
+                    break;
+                case 2:
+                    Toast.makeText(MainActivity.this, "日记生成失败", Toast.LENGTH_SHORT).show();
+                    break;
+            }
+        }
+    };
+
+    static {
+        boolean sdCardExist = Environment.getExternalStorageState().equals(android.os.Environment.MEDIA_MOUNTED); //判断sd卡是否存在
+        if(sdCardExist){
+            rootDir = Environment.getExternalStorageDirectory();
+        }else{
+            rootDir = Environment.getRootDirectory();
+        }
+
+    }
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -120,6 +153,7 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
                 if (data == null) {
                     return;
                 }
+
                 picturePath = getRealFilePath(this, data.getData());
                 BitmapFactory.Options newOpts = new BitmapFactory.Options();
                 newOpts.inSampleSize = 5;
@@ -151,7 +185,7 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
                 //设置intent的Action属性
                 intent.setAction(Intent.ACTION_VIEW);
                 //设置intent的data和Type属性。
-                intent.setDataAndType(Uri.fromFile(new File(sdcardDir, "diary")), IMAGE_UNSPECIFIED);
+                intent.setDataAndType(Uri.fromFile(new File(rootDir, FILE_PATH)), IMAGE_UNSPECIFIED);
                 //跳转
                 startActivity(intent);
                 break;
@@ -195,7 +229,7 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
 
 
     // 菜单项被选择事件
-    public boolean dealMenuItemClick(MenuItem item) {
+    public boolean dealMenuItemClick(final MenuItem item) {
         Log.i(TAG, "日记生成开始.....");
         verifyStoragePermissions(this);
         if (picturePath == null) {
@@ -206,26 +240,33 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
             dateString = sdf1.format(new Date());
         }
         String filePath = FILE_PATH + dateString.split("-")[0] + "/" + dateString.split("-")[0] + "-" + dateString.split("-")[1];
-        File file = new File(sdcardDir, filePath);
+        File file = new File(rootDir, filePath);
         file.setReadable(true);
         if (!file.exists()) {
             file.mkdirs();
         }
+        String text = diaryTextStartText.getText().toString() + diaryTextContent.getText().toString();
+        text = "    " + text.replaceAll("\t", "");
+        Log.i(TAG, text);
+
         file = new File(file, dateString + ".jpg");
-        if (!file.exists()) {
+        loadDialog = DialogUtils.createLoadingDialog(MainActivity.this, "请稍候...");
+
+        DiaryCreateThread thread = new DiaryCreateThread(this, file, text, item);
+        Thread t1=new Thread(thread);
+        t1.start();
+     /*   if (!file.exists()) {
             try {
                 file.createNewFile();
                 file.setReadable(true);
-                String text = diaryTextStartText.getText().toString() + diaryTextContent.getText().toString();
-                text = "    " + text.replaceAll("\t", "");
-                Log.i(TAG, text);
+
                 if(item.getItemId() == R.id.diary_create_normal){
-                    ImageUtil.coptFile(picturePath, file);
-                    ImageUtil.writeMessage(file, text, 0);
+                   ImageUtil.coptFile(picturePath, file);
+                   ImageUtil.writeMessage(file, text, 0);
                 }else if(item.getItemId() == R.id.diary_create_hide){
                     Bitmap bmp = BitmapFactory.decodeResource(this.getResources(), R.drawable.background);
                     ImageUtil.coptFile( bmp, file );
-                    File temp = new File(sdcardDir,FILE_PATH+"temp");
+                    File temp = new File(rootDir,FILE_PATH+"temp");
                     if(!temp.exists()){
                         temp.createNewFile();
                     }
@@ -240,12 +281,65 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
             } catch (Exception e) {
                 e.printStackTrace();
                 Log.e(TAG, e.getMessage(), e);
+                DialogUtils.closeDialog(loadDialog);
                 return false;
             }
+            Toast.makeText(MainActivity.this, "日记生成完成", Toast.LENGTH_SHORT).show();
+        }else{
+            Toast.makeText(MainActivity.this, "日记已经存在", Toast.LENGTH_SHORT).show();
         }
-        Toast.makeText(MainActivity.this, "日记生成完成", Toast.LENGTH_SHORT).show();
+        DialogUtils.closeDialog(loadDialog);*/
         return true;
     }
+
+    class DiaryCreateThread implements Runnable{
+        private File file;
+        private String text;
+        private MenuItem item;
+        private MainActivity content;
+
+        DiaryCreateThread(MainActivity content, File file, String text,MenuItem item){
+            this.file = file;
+            this.text = text;
+            this.item = item;
+            this.content = content;
+        }
+        @Override
+        public void run() {
+            if (!file.exists()) {
+                try {
+                    file.createNewFile();
+                    file.setReadable(true);
+                    if(item.getItemId() == R.id.diary_create_normal){
+                        ImageUtil.coptFile(picturePath, file);
+                        ImageUtil.writeMessage(file, text, 0);
+                    }else if(item.getItemId() == R.id.diary_create_hide){
+                        Bitmap bmp = BitmapFactory.decodeResource(content.getResources(), R.drawable.background);
+                        ImageUtil.coptFile( bmp, file );
+                        File temp = new File(rootDir,FILE_PATH+"temp");
+                        if(!temp.exists()){
+                            temp.createNewFile();
+                        }
+                        ImageUtil.coptFile( picturePath, temp );
+                        ImageUtil.writePhotoMessage( temp ,file, text );
+                        ImageUtil.writeMessage( file,text,1);
+                        temp.delete();
+                    }else if(item.getItemId() == R.id.diary_create_split){
+                        handler.sendEmptyMessage(2);
+                        return;
+                    }
+                } catch (Exception e) {
+                    e.printStackTrace();
+                    Log.e(TAG, e.getMessage(), e);
+                    handler.sendEmptyMessage(2);
+                }
+                handler.sendEmptyMessage(0);
+            }else{
+                handler.sendEmptyMessage(1);
+            }
+        }
+    }
+
 
     public static void verifyStoragePermissions(Activity activity) {
         // Check if we have write permission
