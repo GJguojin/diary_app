@@ -1,0 +1,302 @@
+package com.gj.diary.activity;
+
+import android.Manifest;
+import android.app.Activity;
+import android.app.ProgressDialog;
+import android.content.ContentResolver;
+import android.content.Context;
+import android.content.Intent;
+import android.content.pm.PackageManager;
+import android.content.res.Resources;
+import android.database.Cursor;
+import android.graphics.Bitmap;
+import android.graphics.BitmapFactory;
+import android.graphics.Canvas;
+import android.graphics.Color;
+import android.graphics.Paint;
+import android.graphics.PorterDuff;
+import android.graphics.PorterDuffXfermode;
+import android.graphics.Rect;
+import android.graphics.RectF;
+import android.graphics.drawable.BitmapDrawable;
+import android.net.Uri;
+import android.os.Environment;
+import android.provider.MediaStore;
+import android.support.v4.app.ActivityCompat;
+import android.support.v7.app.AppCompatActivity;
+import android.os.Bundle;
+import android.support.v7.widget.PopupMenu;
+import android.util.Log;
+import android.view.Menu;
+import android.view.MenuItem;
+import android.view.View;
+import android.widget.Button;
+import android.widget.EditText;
+import android.widget.ImageView;
+import android.widget.TextView;
+import android.widget.Toast;
+import android.app.DatePickerDialog;
+import android.widget.DatePicker;
+
+import com.gj.diary.R;
+import com.gj.diary.utils.ImageUtil;
+
+import java.io.File;
+import java.io.InputStream;
+import java.text.SimpleDateFormat;
+import java.util.Calendar;
+import java.util.Date;
+
+public class MainActivity extends AppCompatActivity implements View.OnClickListener {
+
+    private static final int REQUEST_EXTERNAL_STORAGE = 1;
+    private static String[] PERMISSIONS_STORAGE = {
+            Manifest.permission.READ_EXTERNAL_STORAGE,
+            Manifest.permission.WRITE_EXTERNAL_STORAGE};
+
+    private static File sdcardDir = Environment.getExternalStorageDirectory();
+
+    private static final String TAG = "MainActivity";
+    private static final String IMAGE_UNSPECIFIED = "image/*";
+    private static final String FILE_PATH = "/diary/";
+
+    private static String diaryStartText = "\t\t\t\t这张照片还记得吗？这一天是[date],";
+    private static SimpleDateFormat sdf = new SimpleDateFormat("yyyy年MM月dd日");
+    private static SimpleDateFormat sdf1 = new SimpleDateFormat("yyyy-MM-dd");
+    private static String dateString;
+
+
+    private Button dirayCreateButton = null; //生成日志按钮
+    private Button diaryQueryButton = null;
+
+    private TextView diaryTextStartText = null;
+
+    private EditText diaryTextContent;
+
+    private String picturePath;
+    private ImageView diaryPicture;
+
+
+    @Override
+    protected void onCreate(Bundle savedInstanceState) {
+        super.onCreate(savedInstanceState);
+        setContentView(R.layout.activity_main);
+
+        //设置日记时间
+        diaryTextStartText = (TextView) this.findViewById(R.id.diary_text_start);
+        Date date = new Date();
+        String format = sdf.format(date);
+        dateString = sdf1.format(date);
+        diaryTextStartText.setText(diaryStartText.replace("[date]", format));
+        diaryTextStartText.setOnClickListener(this);
+
+        diaryTextContent = (EditText) this.findViewById(R.id.diary_text_content);
+
+        //生成日记方法
+        dirayCreateButton = (Button) this.findViewById(R.id.diray_create);
+        dirayCreateButton.setOnClickListener(this);
+
+        //浏览日记方法
+        diaryQueryButton = (Button) this.findViewById(R.id.diary_query);
+        diaryQueryButton.setOnClickListener(this);
+
+        diaryPicture = (ImageView) findViewById(R.id.diary_picture);
+        diaryPicture.setOnClickListener(this);
+    }
+
+    @Override
+    public boolean onCreateOptionsMenu(Menu menu) {
+        // Inflate the menu; this adds items to the action bar if it is present.
+        getMenuInflater().inflate(R.menu.diary_create_menu, menu);
+        return true;
+    }
+
+
+    @Override
+    protected void onActivityResult(int requestCode, int resultCode, Intent data) {
+        switch (requestCode) {
+            case 1:
+                picturePath = null;
+                if (data == null) {
+                    return;
+                }
+                picturePath = getRealFilePath(this, data.getData());
+                BitmapFactory.Options newOpts = new BitmapFactory.Options();
+                newOpts.inSampleSize = 5;
+                Bitmap bitmap = BitmapFactory.decodeFile(picturePath, newOpts);
+                if(bitmap == null){
+                    picturePath = null;
+                    Toast.makeText(MainActivity.this, "加载图片失败！！", Toast.LENGTH_SHORT).show();
+                    return;
+                }
+                Log.i(TAG, picturePath);
+                bitmap = getRoundedCornerBitmap(bitmap, 25);
+                diaryPicture.setImageBitmap(bitmap);
+                super.onActivityResult(requestCode, resultCode, data);
+                break;
+            default:
+                break;
+        }
+    }
+
+
+    @Override
+    public void onClick(View view) {
+        int id = view.getId();
+        switch (id) {
+            case R.id.diary_query:
+                Log.i(TAG, "日记查看");
+                Intent intent = new Intent();
+                intent.addFlags(Intent.FLAG_ACTIVITY_NEW_TASK);
+                //设置intent的Action属性
+                intent.setAction(Intent.ACTION_VIEW);
+                //设置intent的data和Type属性。
+                intent.setDataAndType(Uri.fromFile(new File(sdcardDir, "diary")), IMAGE_UNSPECIFIED);
+                //跳转
+                startActivity(intent);
+                break;
+            case R.id.diray_create:
+                PopupMenu popupMenu = new PopupMenu(MainActivity.this, view);
+                popupMenu.getMenuInflater().inflate(R.menu.diary_create_menu, popupMenu.getMenu());
+                popupMenu.setOnMenuItemClickListener(new PopupMenu.OnMenuItemClickListener() {
+                    public boolean onMenuItemClick(MenuItem item) {
+                        return dealMenuItemClick(item);
+                    }
+                });
+                popupMenu.show();
+                break;
+            case R.id.diary_text_start:
+                Log.i(TAG, "修改日记时间");
+                Calendar now = Calendar.getInstance();
+                new DatePickerDialog(this, new DatePickerDialog.OnDateSetListener() {
+                    @Override
+                    public void onDateSet(DatePicker view, int year, int monthOfYear, int dayOfMonth) {
+                        try {
+                            dateString = "" + year + "-" + monthOfYear + "-" + dayOfMonth;
+                            Date date = sdf1.parse(dateString);
+                            dateString = sdf1.format(date);
+                            diaryTextStartText.setText(diaryStartText.replace("[date]", sdf.format(date)));
+                        } catch (Exception e) {
+                            e.printStackTrace();
+                        }
+                    }
+                }, now.get(Calendar.YEAR), (now.get(Calendar.MONTH) + 1), now.get(Calendar.DAY_OF_MONTH)).show();
+                break;
+            case R.id.diary_picture:
+
+                Intent openPicture = new Intent(Intent.ACTION_PICK, null);
+                openPicture.setDataAndType(MediaStore.Images.Media.EXTERNAL_CONTENT_URI, IMAGE_UNSPECIFIED);
+                //openPicture.setAction(Intent.ACTION_GET_CONTENT);
+                startActivityForResult(openPicture, 1);
+            default:
+                break;
+        }
+    }
+
+
+    // 菜单项被选择事件
+    public boolean dealMenuItemClick(MenuItem item) {
+        Log.i(TAG, "日记生成开始.....");
+        verifyStoragePermissions(this);
+        if (picturePath == null) {
+            Toast.makeText(MainActivity.this, "请先选择照片", Toast.LENGTH_SHORT).show();
+            return false;
+        }
+        if (dateString == null || "".equals(dateString)) {
+            dateString = sdf1.format(new Date());
+        }
+        String filePath = FILE_PATH + dateString.split("-")[0] + "/" + dateString.split("-")[0] + "-" + dateString.split("-")[1];
+        File file = new File(sdcardDir, filePath);
+        file.setReadable(true);
+        if (!file.exists()) {
+            file.mkdirs();
+        }
+        file = new File(file, dateString + ".jpg");
+        if (!file.exists()) {
+            try {
+                file.createNewFile();
+                file.setReadable(true);
+                String text = diaryTextStartText.getText().toString() + diaryTextContent.getText().toString();
+                text = "    " + text.replaceAll("\t", "");
+                Log.i(TAG, text);
+                if(item.getItemId() == R.id.diary_create_normal){
+                    ImageUtil.coptFile(picturePath, file);
+                    ImageUtil.writeMessage(file, text, 0);
+                }else if(item.getItemId() == R.id.diary_create_hide){
+                    Bitmap bmp = BitmapFactory.decodeResource(this.getResources(), R.drawable.background);
+                    ImageUtil.coptFile( bmp, file );
+                    File temp = new File(sdcardDir,FILE_PATH+"temp");
+                    if(!temp.exists()){
+                        temp.createNewFile();
+                    }
+                    ImageUtil.coptFile( picturePath, temp );
+                    ImageUtil.writePhotoMessage( temp ,file, text );
+                    ImageUtil.writeMessage( file,text,1);
+                    temp.delete();
+                }else if(item.getItemId() == R.id.diary_create_split){
+                    Toast.makeText(MainActivity.this, "分割生成还未完成", Toast.LENGTH_SHORT).show();
+                    return false;
+                }
+            } catch (Exception e) {
+                e.printStackTrace();
+                Log.e(TAG, e.getMessage(), e);
+                return false;
+            }
+        }
+        Toast.makeText(MainActivity.this, "日记生成完成", Toast.LENGTH_SHORT).show();
+        return true;
+    }
+
+    public static void verifyStoragePermissions(Activity activity) {
+        // Check if we have write permission
+        int permission = ActivityCompat.checkSelfPermission(activity, Manifest.permission.WRITE_EXTERNAL_STORAGE);
+        if (permission != PackageManager.PERMISSION_GRANTED) {
+            // We don't have permission so prompt the user
+            ActivityCompat.requestPermissions(activity, PERMISSIONS_STORAGE, REQUEST_EXTERNAL_STORAGE);
+        }
+    }
+
+    public static String getRealFilePath(final Context context, final Uri uri) {
+        if (null == uri) return null;
+        final String scheme = uri.getScheme();
+        String data = null;
+        if (scheme == null) {
+            data = uri.getPath();
+        } else if (ContentResolver.SCHEME_FILE.equals(scheme)) {
+            data = uri.getPath();
+        } else if (ContentResolver.SCHEME_CONTENT.equals(scheme)) {
+            Cursor cursor = context.getContentResolver().query(uri, new String[]{MediaStore.Images.ImageColumns.DATA}, null, null, null);
+            if (null != cursor) {
+                if (cursor.moveToFirst()) {
+                    int index = cursor.getColumnIndex(MediaStore.Images.ImageColumns.DATA);
+                    if (index > -1) {
+                        data = cursor.getString(index);
+                    }
+                }
+                cursor.close();
+            }
+        }
+        return data;
+    }
+
+    //生成圆角图片
+    public static Bitmap getRoundedCornerBitmap(Bitmap bitmap, float roundPx) {
+        try {
+            Bitmap output = Bitmap.createBitmap(bitmap.getWidth(), bitmap.getHeight(), Bitmap.Config.ARGB_8888);
+            Canvas canvas = new Canvas(output);
+            final Paint paint = new Paint();
+            final Rect rect = new Rect(0, 0, bitmap.getWidth(), bitmap.getHeight());
+            final RectF rectF = new RectF(new Rect(0, 0, bitmap.getWidth(), bitmap.getHeight()));
+            paint.setAntiAlias(true);
+            canvas.drawARGB(0, 0, 0, 0);
+            paint.setColor(Color.BLACK);
+            canvas.drawRoundRect(rectF, roundPx, roundPx, paint);
+            paint.setXfermode(new PorterDuffXfermode(PorterDuff.Mode.SRC_IN));
+            final Rect src = new Rect(0, 0, bitmap.getWidth(), bitmap.getHeight());
+            canvas.drawBitmap(bitmap, src, rect, paint);
+            return output;
+        } catch (Exception e) {
+            return bitmap;
+        }
+    }
+}
