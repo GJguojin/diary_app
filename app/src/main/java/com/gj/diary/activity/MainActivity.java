@@ -43,6 +43,7 @@ import com.gj.diary.utils.DialogUtils;
 import com.gj.diary.utils.ImageUtil;
 
 import java.io.File;
+import java.io.InputStream;
 import java.text.SimpleDateFormat;
 import java.util.Calendar;
 import java.util.Date;
@@ -107,7 +108,9 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
         }else{
             rootDir = Environment.getRootDirectory();
         }
+    }
 
+    public MainActivity() {
     }
 
     @Override
@@ -134,6 +137,9 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
         diaryQueryButton.setOnClickListener(this);
 
         diaryPicture = (ImageView) findViewById(R.id.diary_picture);
+        Bitmap defaultDiaryPicture = BitmapFactory.decodeResource(getResources(), R.drawable.background);
+        defaultDiaryPicture = getRoundedCornerBitmap(defaultDiaryPicture,50);
+        diaryPicture.setImageBitmap(defaultDiaryPicture);
         diaryPicture.setOnClickListener(this);
     }
 
@@ -164,7 +170,7 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
                     return;
                 }
                 Log.i(TAG, picturePath);
-                bitmap = getRoundedCornerBitmap(bitmap, 25);
+                bitmap = getRoundedCornerBitmap(bitmap, 20);
                 diaryPicture.setImageBitmap(bitmap);
                 super.onActivityResult(requestCode, resultCode, data);
                 break;
