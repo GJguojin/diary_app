@@ -41,12 +41,15 @@ import android.widget.DatePicker;
 import com.gj.diary.R;
 import com.gj.diary.utils.DialogUtils;
 import com.gj.diary.utils.ImageUtil;
+import com.gj.diary.utils.PropertiesUtil;
 
 import java.io.File;
+import java.io.IOException;
 import java.io.InputStream;
 import java.text.SimpleDateFormat;
 import java.util.Calendar;
 import java.util.Date;
+import java.util.Properties;
 
 public class MainActivity extends AppCompatActivity implements View.OnClickListener {
 
@@ -59,7 +62,8 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
 
     private static final String TAG = "MainActivity";
     private static final String IMAGE_UNSPECIFIED = "image/*";
-    private static final String FILE_PATH = "/diary/日记/picture/";
+    private static String FILE_PATH = "/diary/日记/picture/";
+    private static String DF_BITMAP_PATH = "/diary/defaultBitmap.jpg";
 
     private static String diaryStartText = "\t\t\t\t这张照片还记得吗？这一天是[date],";
     private static SimpleDateFormat sdf = new SimpleDateFormat("yyyy年MM月dd日");
@@ -80,10 +84,10 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
     private Dialog loadDialog;
 
     //定义Handler对象
-    private Handler handler =new Handler(){
+    private Handler handler = new Handler() {
         @Override
         //当有消息发送出来的时候就执行Handler的这个方法
-        public void handleMessage(Message msg){
+        public void handleMessage(Message msg) {
             super.handleMessage(msg);
             //只要执行到这里就关闭对话框
             DialogUtils.closeDialog(loadDialog);
@@ -103,9 +107,9 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
 
     static {
         boolean sdCardExist = Environment.getExternalStorageState().equals(android.os.Environment.MEDIA_MOUNTED); //判断sd卡是否存在
-        if(sdCardExist){
+        if (sdCardExist) {
             rootDir = Environment.getExternalStorageDirectory();
-        }else{
+        } else {
             rootDir = Environment.getRootDirectory();
         }
     }
@@ -117,6 +121,21 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
+
+
+        String filePath = PropertiesUtil.getProperties(this,"filePath");
+        if (filePath != null && !"".equals(filePath)) {
+            FILE_PATH = filePath;
+        }else{
+            PropertiesUtil.saveProperties(this,"filePath",FILE_PATH);
+        }
+
+        String defaultBitmapPath = PropertiesUtil.getProperties(this, "defaultBitmapPath");
+        if (defaultBitmapPath != null && !"".equals(defaultBitmapPath)) {
+            DF_BITMAP_PATH = defaultBitmapPath;
+        }else{
+            PropertiesUtil.saveProperties(this,"defaultBitmapPath",DF_BITMAP_PATH);
+        }
 
         //设置日记时间
         diaryTextStartText = (TextView) this.findViewById(R.id.diary_text_start);
@@ -138,7 +157,7 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
 
         diaryPicture = (ImageView) findViewById(R.id.diary_picture);
         Bitmap defaultDiaryPicture = BitmapFactory.decodeResource(getResources(), R.drawable.background);
-        defaultDiaryPicture = getRoundedCornerBitmap(defaultDiaryPicture,50);
+        defaultDiaryPicture = getRoundedCornerBitmap(defaultDiaryPicture, 50);
         diaryPicture.setImageBitmap(defaultDiaryPicture);
         diaryPicture.setOnClickListener(this);
     }
@@ -164,7 +183,7 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
                 BitmapFactory.Options newOpts = new BitmapFactory.Options();
                 newOpts.inSampleSize = 5;
                 Bitmap bitmap = BitmapFactory.decodeFile(picturePath, newOpts);
-                if(bitmap == null){
+                if (bitmap == null) {
                     picturePath = null;
                     Toast.makeText(MainActivity.this, "加载图片失败！！", Toast.LENGTH_SHORT).show();
                     return;
@@ -186,12 +205,8 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
         switch (id) {
             case R.id.diary_query:
                 Log.i(TAG, "日记查看");
-                Intent intent = new Intent();
-                intent.addFlags(Intent.FLAG_ACTIVITY_NEW_TASK);
-                //设置intent的Action属性
-                intent.setAction(Intent.ACTION_VIEW);
-                //设置intent的data和Type属性。
-                intent.setDataAndType(Uri.fromFile(new File(rootDir, FILE_PATH)), IMAGE_UNSPECIFIED);
+                Intent intent = new Intent(Intent.ACTION_PICK, null);
+                intent.setDataAndType(MediaStore.Images.Media.EXTERNAL_CONTENT_URI, IMAGE_UNSPECIFIED);
                 //跳转
                 startActivity(intent);
                 break;
@@ -223,7 +238,6 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
                 }, now.get(Calendar.YEAR), (now.get(Calendar.MONTH) + 1), now.get(Calendar.DAY_OF_MONTH)).show();
                 break;
             case R.id.diary_picture:
-
                 Intent openPicture = new Intent(Intent.ACTION_PICK, null);
                 openPicture.setDataAndType(MediaStore.Images.Media.EXTERNAL_CONTENT_URI, IMAGE_UNSPECIFIED);
                 //openPicture.setAction(Intent.ACTION_GET_CONTENT);
@@ -259,7 +273,7 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
         loadDialog = DialogUtils.createLoadingDialog(MainActivity.this, "请稍候...");
 
         DiaryCreateThread thread = new DiaryCreateThread(this, file, text, item);
-        Thread t1=new Thread(thread);
+        Thread t1 = new Thread(thread);
         t1.start();
      /*   if (!file.exists()) {
             try {
@@ -298,39 +312,48 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
         return true;
     }
 
-    class DiaryCreateThread implements Runnable{
+    class DiaryCreateThread implements Runnable {
         private File file;
         private String text;
         private MenuItem item;
         private MainActivity content;
 
-        DiaryCreateThread(MainActivity content, File file, String text,MenuItem item){
+        DiaryCreateThread(MainActivity content, File file, String text, MenuItem item) {
             this.file = file;
             this.text = text;
             this.item = item;
             this.content = content;
         }
+
         @Override
         public void run() {
             if (!file.exists()) {
                 try {
                     file.createNewFile();
                     file.setReadable(true);
-                    if(item.getItemId() == R.id.diary_create_normal){
+                    if (item.getItemId() == R.id.diary_create_normal) {
                         ImageUtil.coptFile(picturePath, file);
                         ImageUtil.writeMessage(file, text, 0);
-                    }else if(item.getItemId() == R.id.diary_create_hide){
-                        Bitmap bmp = BitmapFactory.decodeResource(content.getResources(), R.drawable.background);
-                        ImageUtil.coptFile( bmp, file );
-                        File temp = new File(rootDir,FILE_PATH+"temp");
-                        if(!temp.exists()){
+                    } else if (item.getItemId() == R.id.diary_create_hide) {
+                        Bitmap bmp = null;
+                        File defaultBitmapFile = new File(rootDir,"/diary/defaultBitmap.jpg");
+                        if(defaultBitmapFile.exists()){
+                            bmp = BitmapFactory.decodeFile(defaultBitmapFile.getPath());
+                        }else{
+                            bmp = BitmapFactory.decodeResource(content.getResources(), R.drawable.background);
+                            defaultBitmapFile.createNewFile();
+                            ImageUtil.coptFile(bmp, defaultBitmapFile);
+                        }
+                        ImageUtil.coptFile(bmp, file);
+                        File temp = new File(rootDir, FILE_PATH + "temp");
+                        if (!temp.exists()) {
                             temp.createNewFile();
                         }
-                        ImageUtil.coptFile( picturePath, temp );
-                        ImageUtil.writePhotoMessage( temp ,file, text );
-                        ImageUtil.writeMessage( file,text,1);
+                        ImageUtil.coptFile(picturePath, temp);
+                        ImageUtil.writePhotoMessage(temp, file, text);
+                        ImageUtil.writeMessage(file, text, 1);
                         temp.delete();
-                    }else if(item.getItemId() == R.id.diary_create_split){
+                    } else if (item.getItemId() == R.id.diary_create_split) {
                         handler.sendEmptyMessage(2);
                         return;
                     }
@@ -340,7 +363,7 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
                     handler.sendEmptyMessage(2);
                 }
                 handler.sendEmptyMessage(0);
-            }else{
+            } else {
                 handler.sendEmptyMessage(1);
             }
         }

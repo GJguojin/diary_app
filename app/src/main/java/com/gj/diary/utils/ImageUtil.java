@@ -27,8 +27,8 @@ public class ImageUtil {
 	
 	public final static String PHOTO_LINE= "***********************************************************************";
 
-	public static final float W = 2049;//缩放后宽
-	public static final float H = 1152;//缩放后高
+	public static final float W = 2080;//缩放后宽
+	public static final float H = 1168;//缩放后高
 	
 	public static void coptFile( String picturePath,File destFile ) throws IOException {
 		Bitmap bitmap = ratio(picturePath);
@@ -64,7 +64,7 @@ public class ImageUtil {
 	 */
 	public static void storeImage(Bitmap bitmap, File outPath) throws IOException {
 		FileOutputStream os = new FileOutputStream(outPath);
-		bitmap.compress(Bitmap.CompressFormat.JPEG, 75, os);
+		bitmap.compress(Bitmap.CompressFormat.JPEG, 73, os);
         os.flush();
         os.close();
 	}
@@ -95,7 +95,7 @@ public class ImageUtil {
 			reSize = H/h;
 		}
 
-		if(reSize != (float)1.0){
+		if(reSize < (float)1.0){
 			Matrix matrix = new Matrix();
 			matrix.postScale(reSize, reSize);
             image = Bitmap.createBitmap(image, 0, 0, image.getWidth(), image.getHeight(), matrix, true);
