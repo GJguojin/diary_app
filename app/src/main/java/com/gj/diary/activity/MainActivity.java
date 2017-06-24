@@ -40,6 +40,7 @@ import android.widget.DatePicker;
 
 import com.gj.diary.R;
 import com.gj.diary.utils.DialogUtils;
+import com.gj.diary.utils.ImageSplitUtil;
 import com.gj.diary.utils.ImageUtil;
 import com.gj.diary.utils.PropertiesUtil;
 
@@ -354,8 +355,9 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
                         ImageUtil.writeMessage(file, text, 1);
                         temp.delete();
                     } else if (item.getItemId() == R.id.diary_create_split) {
-                        handler.sendEmptyMessage(2);
-                        return;
+                        String returnString = ImageSplitUtil.splitImage(file,picturePath, 100, 100);
+                        ImageUtil.writeSplitMessage( returnString ,file, text );
+                        ImageUtil.writeMessage( file,text,2);
                     }
                 } catch (Exception e) {
                     e.printStackTrace();

@@ -6,11 +6,8 @@ import android.util.Log;
 import java.io.File;
 import java.io.FileInputStream;
 import java.io.FileNotFoundException;
-import java.io.FileOutputStream;
 import java.io.IOException;
-import java.io.InputStream;
 import java.io.OutputStream;
-import java.util.Enumeration;
 import java.util.Properties;
 
 /**
@@ -21,6 +18,8 @@ public class PropertiesUtil {
     private static Properties props;
 
     private static final String salt = "diary";
+
+    private final static String CONFIG_NAME="diaryConfig.properties";
 
     /**
      * 得到属性值
@@ -47,8 +46,8 @@ public class PropertiesUtil {
             }
             FileInputStream fileInputStream = null;
             try {
-                fileInputStream = context.openFileInput("diaryConfig.properties");
-                props.load(context.openFileInput("diaryConfig.properties"));
+                fileInputStream = context.openFileInput(CONFIG_NAME);
+                props.load(context.openFileInput(CONFIG_NAME));
             } catch (FileNotFoundException e) {
                 Log.e("PropertiesUtil", "config.properties Not Found Exception", e);
                 return null;
@@ -82,10 +81,10 @@ public class PropertiesUtil {
         try {
             if (props == null) {
                 props = new Properties();
-                fileInputStream = context.openFileInput("diaryConfig.properties");
+                fileInputStream = context.openFileInput(CONFIG_NAME);
                 props.load(fileInputStream);
             }
-            out = context.openFileOutput("diaryConfig.properties", Context.MODE_PRIVATE);
+            out = context.openFileOutput(CONFIG_NAME, Context.MODE_PRIVATE);
             if (!props.contains("password")) {
                 props.setProperty("password", MD5Util.getMd532("00000000" + salt));
             }
