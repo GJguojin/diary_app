@@ -158,7 +158,7 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
 
         diaryPicture = (ImageView) findViewById(R.id.diary_picture);
         Bitmap defaultDiaryPicture = BitmapFactory.decodeResource(getResources(), R.drawable.background);
-        defaultDiaryPicture = getRoundedCornerBitmap(defaultDiaryPicture, 50);
+        defaultDiaryPicture = getRoundedCornerBitmap(defaultDiaryPicture, 70);
         diaryPicture.setImageBitmap(defaultDiaryPicture);
         diaryPicture.setOnClickListener(this);
     }
@@ -190,7 +190,7 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
                     return;
                 }
                 Log.i(TAG, picturePath);
-                bitmap = getRoundedCornerBitmap(bitmap, 20);
+                bitmap = getRoundedCornerBitmap(bitmap, 25);
                 diaryPicture.setImageBitmap(bitmap);
                 super.onActivityResult(requestCode, resultCode, data);
                 break;
