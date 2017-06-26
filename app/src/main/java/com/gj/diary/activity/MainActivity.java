@@ -44,6 +44,8 @@ import com.gj.diary.utils.ImageSplitUtil;
 import com.gj.diary.utils.ImageUtil;
 import com.gj.diary.utils.PropertiesUtil;
 import com.gj.diary.view.DiaryCreateDialog;
+import com.unnamed.b.atv.model.TreeNode;
+import com.unnamed.b.atv.view.AndroidTreeView;
 
 import java.io.File;
 import java.text.SimpleDateFormat;
@@ -57,11 +59,11 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
             Manifest.permission.READ_EXTERNAL_STORAGE,
             Manifest.permission.WRITE_EXTERNAL_STORAGE};
 
-    private static File rootDir;
+    public static File rootDir;
 
     private static final String TAG = "MainActivity";
     private static final String IMAGE_UNSPECIFIED = "image/*";
-    private static String FILE_PATH = "/diary/日记/picture/";
+    public static String FILE_PATH = "/diary/日记/picture/";
     private static String DF_BITMAP_PATH = "/diary/defaultBitmap.jpg";
 
     private static String diaryStartText = "\t\t\t\t这张照片还记得吗？这一天是[date],";
@@ -212,10 +214,10 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
         switch (id) {
             case R.id.diary_query:
                 Log.i(TAG, "日记查看");
-                Intent intent = new Intent(Intent.ACTION_PICK, null);
-                intent.setDataAndType(MediaStore.Images.Media.EXTERNAL_CONTENT_URI, IMAGE_UNSPECIFIED);
-                //跳转
-                startActivity(intent);
+                Intent diaryQueryIntent =new Intent();
+                diaryQueryIntent.setClass(MainActivity.this, DiaryQueryActivity.class);
+               //启动
+                MainActivity.this.startActivity(diaryQueryIntent);
                 break;
             case R.id.diray_create:
                 dialog =  new DiaryCreateDialog(this);
