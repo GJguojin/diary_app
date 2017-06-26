@@ -79,7 +79,7 @@ public class ImageUtil {
 
 	public static Bitmap ratio( String picturePath) throws IOException {
 		Bitmap image =  BitmapFactory.decodeFile(picturePath);
-		ratio(image);
+		image = ratio(image);
 		return image;
 	}
 

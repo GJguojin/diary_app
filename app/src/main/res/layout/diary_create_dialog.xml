@@ -1,0 +1,106 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:background="#ffffffff"
+    android:orientation="vertical"
+    android:padding="10dp"
+    android:minWidth="300dp"
+    android:id="@+id/diary_create_dialog"
+    >
+    <RadioGroup
+        android:id="@+id/diary_create_radioGroup"
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:layout_weight="1">
+
+        <RadioButton
+            android:id="@+id/diary_create_normal"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:text="普通生成"
+            android:textSize="18dp"
+            android:checked="true"/>
+
+        <RadioButton
+            android:id="@+id/diary_create_hide"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:textSize="18dp"
+            android:text="隐藏生成" />
+
+        <RadioButton
+            android:id="@+id/diary_create_split"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:textSize="18dp"
+            android:text="切割生成" />
+    </RadioGroup>
+
+
+
+    <LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+        android:layout_width="wrap_content"
+        android:layout_height="match_parent"
+        android:orientation="horizontal"
+        android:visibility="invisible"
+        android:layout_weight="1"
+        android:textSize="16dp"
+        android:id="@+id/split_create_wh">
+
+        <TextView
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_weight="0"
+            android:text="宽：" />
+        <EditText
+            android:id="@+id/split_create_w"
+            android:layout_width="60dp"
+            android:layout_height="wrap_content"
+            android:layout_weight="1"
+            android:ems="10"
+            android:inputType="number"
+            android:text="50"/>
+        <TextView
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_weight="0"
+            android:text="高：" />
+        <EditText
+            android:id="@+id/split_create_h"
+            android:layout_width="60dp"
+            android:layout_height="wrap_content"
+            android:layout_weight="1"
+            android:ems="10"
+            android:inputType="number"
+            android:text="50"/>
+    </LinearLayout>
+
+
+    <LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+        android:layout_width="wrap_content"
+        android:layout_height="match_parent"
+        android:orientation="horizontal"
+        android:layout_gravity="center_horizontal"
+        android:layout_weight="1">
+
+        <TextView
+            android:id="@+id/diary_create_ok"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_weight="0"
+            android:padding="10dp"
+            android:textSize="20dp"
+            android:text="确定" />
+
+        <TextView
+            android:id="@+id/diary_create_cancel"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_weight="0"
+            android:padding="10dp"
+            android:textSize="20dp"
+            android:text="取消" />
+    </LinearLayout>
+
+</LinearLayout>

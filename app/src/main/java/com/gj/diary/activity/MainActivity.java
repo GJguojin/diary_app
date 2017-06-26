@@ -43,14 +43,12 @@ import com.gj.diary.utils.DialogUtils;
 import com.gj.diary.utils.ImageSplitUtil;
 import com.gj.diary.utils.ImageUtil;
 import com.gj.diary.utils.PropertiesUtil;
+import com.gj.diary.view.DiaryCreateDialog;
 
 import java.io.File;
-import java.io.IOException;
-import java.io.InputStream;
 import java.text.SimpleDateFormat;
 import java.util.Calendar;
 import java.util.Date;
-import java.util.Properties;
 
 public class MainActivity extends AppCompatActivity implements View.OnClickListener {
 
@@ -84,6 +82,8 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
 
     private Dialog loadDialog;
 
+    private DiaryCreateDialog dialog;
+
     //定义Handler对象
     private Handler handler = new Handler() {
         @Override
@@ -92,6 +92,9 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
             super.handleMessage(msg);
             //只要执行到这里就关闭对话框
             DialogUtils.closeDialog(loadDialog);
+            if(dialog !=  null){
+                dialog.dismiss();
+            }
             switch (msg.what) {
                 case 0:
                     Toast.makeText(MainActivity.this, "日记生成完成", Toast.LENGTH_SHORT).show();
@@ -101,6 +104,9 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
                     break;
                 case 2:
                     Toast.makeText(MainActivity.this, "日记生成失败", Toast.LENGTH_SHORT).show();
+                    break;
+                case 3:
+                    Toast.makeText(MainActivity.this, "请先选择照片", Toast.LENGTH_SHORT).show();
                     break;
             }
         }
@@ -124,18 +130,18 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
         setContentView(R.layout.activity_main);
 
 
-        String filePath = PropertiesUtil.getProperties(this,"filePath");
+        String filePath = PropertiesUtil.getProperties(this, "filePath");
         if (filePath != null && !"".equals(filePath)) {
             FILE_PATH = filePath;
-        }else{
-            PropertiesUtil.saveProperties(this,"filePath",FILE_PATH);
+        } else {
+            PropertiesUtil.saveProperties(this, "filePath", FILE_PATH);
         }
 
         String defaultBitmapPath = PropertiesUtil.getProperties(this, "defaultBitmapPath");
         if (defaultBitmapPath != null && !"".equals(defaultBitmapPath)) {
             DF_BITMAP_PATH = defaultBitmapPath;
-        }else{
-            PropertiesUtil.saveProperties(this,"defaultBitmapPath",DF_BITMAP_PATH);
+        } else {
+            PropertiesUtil.saveProperties(this, "defaultBitmapPath", DF_BITMAP_PATH);
         }
 
         //设置日记时间
@@ -166,7 +172,7 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
     @Override
     public boolean onCreateOptionsMenu(Menu menu) {
         // Inflate the menu; this adds items to the action bar if it is present.
-        getMenuInflater().inflate(R.menu.diary_create_menu, menu);
+        //getMenuInflater().inflate(R.menu.diary_create_menu, menu);
         return true;
     }
 
@@ -212,14 +218,15 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
                 startActivity(intent);
                 break;
             case R.id.diray_create:
-                PopupMenu popupMenu = new PopupMenu(MainActivity.this, view);
-                popupMenu.getMenuInflater().inflate(R.menu.diary_create_menu, popupMenu.getMenu());
-                popupMenu.setOnMenuItemClickListener(new PopupMenu.OnMenuItemClickListener() {
-                    public boolean onMenuItemClick(MenuItem item) {
-                        return dealMenuItemClick(item);
+                dialog =  new DiaryCreateDialog(this);
+                dialog.setDiaryCreateOkListener(new View.OnClickListener(){
+                    @Override
+                    public void onClick(View view) {
+                        int diaryCreateType = dialog.getDiaryCreateType();
+                        dealDiaryCreateClick(diaryCreateType,dialog.getSplitWidth(),dialog.getSplitHeight());
                     }
                 });
-                popupMenu.show();
+                dialog.show();
                 break;
             case R.id.diary_text_start:
                 Log.i(TAG, "修改日记时间");
@@ -250,11 +257,11 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
 
 
     // 菜单项被选择事件
-    public boolean dealMenuItemClick(final MenuItem item) {
+    public boolean dealDiaryCreateClick(final int itemid,final int splitWidth,final int splitHeight) {
         Log.i(TAG, "日记生成开始.....");
         verifyStoragePermissions(this);
         if (picturePath == null) {
-            Toast.makeText(MainActivity.this, "请先选择照片", Toast.LENGTH_SHORT).show();
+            handler.sendEmptyMessage(3);
             return false;
         }
         if (dateString == null || "".equals(dateString)) {
@@ -273,57 +280,27 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
         file = new File(file, dateString + ".jpg");
         loadDialog = DialogUtils.createLoadingDialog(MainActivity.this, "请稍候...");
 
-        DiaryCreateThread thread = new DiaryCreateThread(this, file, text, item);
+        DiaryCreateThread thread = new DiaryCreateThread(this, file, text, itemid,splitWidth,splitHeight);
         Thread t1 = new Thread(thread);
         t1.start();
-     /*   if (!file.exists()) {
-            try {
-                file.createNewFile();
-                file.setReadable(true);
-
-                if(item.getItemId() == R.id.diary_create_normal){
-                   ImageUtil.coptFile(picturePath, file);
-                   ImageUtil.writeMessage(file, text, 0);
-                }else if(item.getItemId() == R.id.diary_create_hide){
-                    Bitmap bmp = BitmapFactory.decodeResource(this.getResources(), R.drawable.background);
-                    ImageUtil.coptFile( bmp, file );
-                    File temp = new File(rootDir,FILE_PATH+"temp");
-                    if(!temp.exists()){
-                        temp.createNewFile();
-                    }
-                    ImageUtil.coptFile( picturePath, temp );
-                    ImageUtil.writePhotoMessage( temp ,file, text );
-                    ImageUtil.writeMessage( file,text,1);
-                    temp.delete();
-                }else if(item.getItemId() == R.id.diary_create_split){
-                    Toast.makeText(MainActivity.this, "分割生成还未完成", Toast.LENGTH_SHORT).show();
-                    return false;
-                }
-            } catch (Exception e) {
-                e.printStackTrace();
-                Log.e(TAG, e.getMessage(), e);
-                DialogUtils.closeDialog(loadDialog);
-                return false;
-            }
-            Toast.makeText(MainActivity.this, "日记生成完成", Toast.LENGTH_SHORT).show();
-        }else{
-            Toast.makeText(MainActivity.this, "日记已经存在", Toast.LENGTH_SHORT).show();
-        }
-        DialogUtils.closeDialog(loadDialog);*/
         return true;
     }
 
     class DiaryCreateThread implements Runnable {
         private File file;
         private String text;
-        private MenuItem item;
+        private int itemId;
         private MainActivity content;
+        private int splitWidth;
+        private int splitHeight;
 
-        DiaryCreateThread(MainActivity content, File file, String text, MenuItem item) {
+        DiaryCreateThread(MainActivity content, File file, String text, int itemId,int splitWidth,int splitHeight) {
             this.file = file;
             this.text = text;
-            this.item = item;
+            this.itemId = itemId;
             this.content = content;
+            this.splitHeight = splitHeight==0?50:splitHeight;
+            this.splitWidth = splitWidth == 0?50:splitWidth;
         }
 
         @Override
@@ -332,15 +309,15 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
                 try {
                     file.createNewFile();
                     file.setReadable(true);
-                    if (item.getItemId() == R.id.diary_create_normal) {
+                    if (itemId == R.id.diary_create_normal) {
                         ImageUtil.coptFile(picturePath, file);
                         ImageUtil.writeMessage(file, text, 0);
-                    } else if (item.getItemId() == R.id.diary_create_hide) {
+                    } else if (itemId == R.id.diary_create_hide) {
                         Bitmap bmp = null;
-                        File defaultBitmapFile = new File(rootDir,"/diary/defaultBitmap.jpg");
-                        if(defaultBitmapFile.exists()){
+                        File defaultBitmapFile = new File(rootDir, "/diary/defaultBitmap.jpg");
+                        if (defaultBitmapFile.exists()) {
                             bmp = BitmapFactory.decodeFile(defaultBitmapFile.getPath());
-                        }else{
+                        } else {
                             bmp = BitmapFactory.decodeResource(content.getResources(), R.drawable.background);
                             defaultBitmapFile.createNewFile();
                             ImageUtil.coptFile(bmp, defaultBitmapFile);
@@ -354,10 +331,10 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
                         ImageUtil.writePhotoMessage(temp, file, text);
                         ImageUtil.writeMessage(file, text, 1);
                         temp.delete();
-                    } else if (item.getItemId() == R.id.diary_create_split) {
-                        String returnString = ImageSplitUtil.splitImage(file,picturePath, 100, 100);
-                        ImageUtil.writeSplitMessage( returnString ,file, text );
-                        ImageUtil.writeMessage( file,text,2);
+                    } else if (itemId == R.id.diary_create_split) {
+                        String returnString = ImageSplitUtil.splitImage(file, picturePath, splitWidth, splitHeight);
+                        ImageUtil.writeSplitMessage(returnString, file, text);
+                        ImageUtil.writeMessage(file, text, 2);
                     }
                 } catch (Exception e) {
                     e.printStackTrace();

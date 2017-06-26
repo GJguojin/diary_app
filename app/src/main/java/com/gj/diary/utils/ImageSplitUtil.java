@@ -111,6 +111,7 @@ public class ImageSplitUtil {
      */
     private static Bitmap[][] splitImage(String filePath, Integer chunkWidth, Integer chunkHeight, Integer rows, Integer cols) throws IOException {
         Bitmap image = ImageUtil.ratio(filePath);
+
         int width = image.getWidth(); // 原图宽
         int height = image.getHeight();// 原图高
 
