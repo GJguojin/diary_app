@@ -5,8 +5,10 @@ import android.support.annotation.Nullable;
 import android.support.v7.app.AppCompatActivity;
 import android.view.Gravity;
 import android.widget.FrameLayout;
+import android.widget.Toast;
 
 import com.gj.diary.R;
+import com.gj.diary.holder.DiaryTreeHolder;
 import com.unnamed.b.atv.model.TreeNode;
 import com.unnamed.b.atv.view.AndroidTreeView;
 
@@ -28,16 +30,32 @@ public class DiaryQueryActivity extends AppCompatActivity {
         setContentView(R.layout.activity_diary_query);
 
         TreeNode root = TreeNode.root();
-//        TreeNode parent = new TreeNode("日记");
-//        root.addChild(parent);
         loadingTree(root);
         AndroidTreeView tView = new AndroidTreeView(this, root);
+        tView.setDefaultNodeClickListener(new TreeNode.TreeNodeClickListener(){
+            @Override
+            public void onClick(TreeNode node, Object value) {
+                DiaryTreeHolder.DiaryTreeItem diaryTreeItem = (DiaryTreeHolder.DiaryTreeItem) value;
+                if(node.isLeaf()){
+                    Toast.makeText(DiaryQueryActivity.this, "照片"+diaryTreeItem.getFileName()+"被点击", Toast.LENGTH_SHORT).show();
+                }
+            }
+        });
 
         FrameLayout.LayoutParams params = new FrameLayout.LayoutParams(FrameLayout.LayoutParams.MATCH_PARENT, FrameLayout.LayoutParams.WRAP_CONTENT);
         //设置顶部,左边布局
         params.gravity= Gravity.TOP|Gravity.LEFT;
         //tView.setUse2dScroll(true);
+        expandNode(root);
         this.addContentView(tView.getView(),params);
+    }
+
+    private void expandNode(TreeNode node) {
+        node.setExpanded(true);
+        List<TreeNode> children = node.getChildren();
+        if(node != null && node.size() >0){
+            expandNode(children.get(0));
+        }
     }
 
     private void loadingTree( TreeNode root ) {
@@ -45,7 +63,7 @@ public class DiaryQueryActivity extends AppCompatActivity {
         File[] roots = orderByName(rootFile.listFiles());
         TreeNode node = null;
         for( int i = roots.length - 1; i >= 0; i-- ) {
-            node = new TreeNode( roots[i].getName());
+            node = new TreeNode(new DiaryTreeHolder.DiaryTreeItem(roots[i].getName(),roots[i].getPath())).setViewHolder(new DiaryTreeHolder(this));
             root.addChild(node);
             loadingTree( roots[i], node );
         }
@@ -69,7 +87,7 @@ public class DiaryQueryActivity extends AppCompatActivity {
             if(files[i].isFile() && fileName.endsWith("temp")){
                 continue;
             }
-            subNode = new TreeNode(fileName);
+            subNode = new TreeNode( new DiaryTreeHolder.DiaryTreeItem(fileName,filePath)).setViewHolder(new DiaryTreeHolder(this));
             node.addChild(subNode);
             if( files[i].isDirectory() ) {
                 loadingTree( files[i], subNode );
