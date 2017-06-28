@@ -131,7 +131,6 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
 
-
         String filePath = PropertiesUtil.getProperties(this, "filePath");
         if (filePath != null && !"".equals(filePath)) {
             FILE_PATH = filePath;
