@@ -8,6 +8,8 @@ import android.view.View;
 import android.widget.ImageView;
 import android.widget.TextView;
 
+import com.gj.diary.activity.MainActivity;
+import com.gj.diary.view.DiaryImageView;
 import com.unnamed.b.atv.model.TreeNode;
 
 import com.gj.diary.R;
@@ -29,6 +31,7 @@ public class DiaryTreeHolder extends TreeNode.BaseNodeViewHolder<DiaryTreeHolder
     private static Bitmap arrowDown;
     private static  Bitmap arrowRight;
     private   View forderView;
+    private   View pictureView;
     private  TextView diaryFolderValue;
 
     @Override
@@ -39,11 +42,21 @@ public class DiaryTreeHolder extends TreeNode.BaseNodeViewHolder<DiaryTreeHolder
                 BitmapFactory.Options newOpts = new BitmapFactory.Options();
                 newOpts.inSampleSize = 4;
                 Bitmap bitmap = BitmapFactory.decodeFile(value.filePath,newOpts);
+                bitmap = MainActivity.getRoundedCornerBitmap(bitmap, 15);
                 value.setFileImg(bitmap);
             }
-            ImageView imageView = new ImageView(context);
-            imageView.setImageBitmap(value.fileImg);
-            return imageView;
+            pictureView = inflater.inflate(R.layout.diary_query_pictue, null, false);
+            DiaryImageView picture = (DiaryImageView)pictureView.findViewById(R.id.diary_query_picture);
+            picture.setImageBitmap(value.fileImg);
+
+            final TextView pictureText = (TextView) pictureView.findViewById(R.id.diary_node_value);
+            String fileName = value.getFileName();
+            if(fileName.endsWith("jpg")){
+                fileName = fileName.substring(0,10);
+            }
+            pictureText.setText(fileName);
+
+            return pictureView;
         }else{
             if(forderView == null){
                 forderView = inflater.inflate(R.layout.diary_query_folder, null, false);
