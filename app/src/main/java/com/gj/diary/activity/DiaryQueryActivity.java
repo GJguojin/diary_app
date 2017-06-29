@@ -2,8 +2,11 @@ package com.gj.diary.activity;
 
 import android.os.Bundle;
 import android.support.annotation.Nullable;
+import android.support.v7.app.ActionBar;
 import android.support.v7.app.AppCompatActivity;
 import android.view.Gravity;
+import android.view.MenuItem;
+import android.view.Window;
 import android.widget.FrameLayout;
 import android.widget.Toast;
 
@@ -17,6 +20,7 @@ import java.util.Arrays;
 import java.util.Collections;
 import java.util.Comparator;
 import java.util.List;
+import java.util.regex.Pattern;
 
 /**
  * Created by Administrator on 2017/6/26.
@@ -25,11 +29,18 @@ import java.util.List;
 public class DiaryQueryActivity extends AppCompatActivity {
 
     private  AndroidTreeView tView;
+    private static Pattern p = Pattern.compile("\\d{4}-\\d{2}-\\d{2}\\.jpg$") ;
 
     @Override
     protected void onCreate(@Nullable Bundle savedInstanceState) {
-        super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_diary_query);
+        super.onCreate(savedInstanceState);
+
+        ActionBar actionBar = getSupportActionBar();
+        actionBar.setDisplayHomeAsUpEnabled(true);
+        actionBar.setHomeButtonEnabled(true);
+        actionBar.setTitle("日记浏览");
+        actionBar.show();
 
         TreeNode root = TreeNode.root();
         loadingTree(root);
@@ -91,6 +102,11 @@ public class DiaryQueryActivity extends AppCompatActivity {
             if(files[i].isFile() && fileName.endsWith("temp")){
                 continue;
             }
+            if(files[i].isFile()){
+                if(!p.matcher(fileName).matches()){
+                    continue;
+                }
+            }
             subNode = new TreeNode( new DiaryTreeHolder.DiaryTreeItem(fileName,filePath));
             node.addChild(subNode);
             if( files[i].isDirectory() ) {
@@ -113,5 +129,18 @@ public class DiaryQueryActivity extends AppCompatActivity {
             }
         });
         return (File[]) fileList.toArray();
+    }
+
+    @Override
+    public boolean onOptionsItemSelected(MenuItem item) {
+        if (item != null) {
+            switch (item.getItemId()) {
+                case android.R.id.home:
+
+                    finish();
+                    break;
+            }
+        }
+        return true;
     }
 }
