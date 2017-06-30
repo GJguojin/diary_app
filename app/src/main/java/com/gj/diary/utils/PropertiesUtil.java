@@ -17,6 +17,8 @@ public class PropertiesUtil {
 
     private static Properties props;
 
+    public static String diaryPassword;
+
     private static final String salt = "diary";
 
     private final static String CONFIG_NAME="diaryConfig.properties";
@@ -118,5 +120,27 @@ public class PropertiesUtil {
         }
     }
 
-
+    public static boolean checkPassword(Context context,String password,String model){
+        if(password != "" && password != null){
+            String oldPassword = "";
+            if("1".equals( model )){
+                oldPassword = getProperties( context, "password");
+            }else{
+                oldPassword = getProperties(context, "passwordPhoto" );
+            }
+            if(getMd5String( password).equalsIgnoreCase( oldPassword )){
+                if("1".equals( model )){
+                    diaryPassword = password;
+                }
+                return true;
+            }else{
+                return false;
+            }
+        }else{
+            return false;
+        }
+    }
+    public static String getMd5String(String password){
+        return MD5Util.getMd532( password+salt );
+    }
 }

@@ -23,6 +23,7 @@ import android.os.Handler;
 import android.os.Message;
 import android.provider.MediaStore;
 import android.support.v4.app.ActivityCompat;
+import android.support.v7.app.ActionBar;
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
 import android.support.v7.widget.PopupMenu;
@@ -131,6 +132,14 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
 
+        ActionBar actionBar = getSupportActionBar();
+        //actionBar.setHomeButtonEnabled(true);
+        actionBar.setIcon(R.mipmap.diary);
+        actionBar.setDisplayShowHomeEnabled(true);
+        //actionBar.setLogo(R.mipmap.diary);
+        actionBar.setTitle("日记制作");
+        actionBar.show();
+
         String filePath = PropertiesUtil.getProperties(this, "filePath");
         if (filePath != null && !"".equals(filePath)) {
             FILE_PATH = filePath;
@@ -236,7 +245,7 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
                     @Override
                     public void onDateSet(DatePicker view, int year, int monthOfYear, int dayOfMonth) {
                         try {
-                            dateString = "" + year + "-" + monthOfYear + "-" + dayOfMonth;
+                            dateString = "" + year + "-" + (monthOfYear+1) + "-" + dayOfMonth;
                             Date date = sdf1.parse(dateString);
                             dateString = sdf1.format(date);
                             diaryTextStartText.setText(diaryStartText.replace("[date]", sdf.format(date)));
@@ -244,7 +253,7 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
                             e.printStackTrace();
                         }
                     }
-                }, now.get(Calendar.YEAR), (now.get(Calendar.MONTH) + 1), now.get(Calendar.DAY_OF_MONTH)).show();
+                }, now.get(Calendar.YEAR), now.get(Calendar.MONTH), now.get(Calendar.DAY_OF_MONTH)).show();
                 break;
             case R.id.diary_picture:
                 Intent openPicture = new Intent(Intent.ACTION_PICK, null);

@@ -1,21 +1,30 @@
 package com.gj.diary.activity;
 
+import android.content.Context;
 import android.os.Bundle;
 import android.support.annotation.Nullable;
 import android.support.v7.app.ActionBar;
+import android.support.v7.app.AlertDialog;
 import android.support.v7.app.AppCompatActivity;
+import android.text.InputType;
 import android.view.Gravity;
 import android.view.MenuItem;
 import android.view.Window;
+import android.widget.EditText;
 import android.widget.FrameLayout;
 import android.widget.Toast;
 
 import com.gj.diary.R;
 import com.gj.diary.holder.DiaryTreeHolder;
+import com.gj.diary.utils.PropertiesUtil;
+import com.gj.diary.view.DiaryLoginDialog;
 import com.unnamed.b.atv.model.TreeNode;
 import com.unnamed.b.atv.view.AndroidTreeView;
 
+import org.xmlpull.v1.XmlPullParserException;
+
 import java.io.File;
+import java.io.IOException;
 import java.util.Arrays;
 import java.util.Collections;
 import java.util.Comparator;
@@ -28,8 +37,8 @@ import java.util.regex.Pattern;
 
 public class DiaryQueryActivity extends AppCompatActivity {
 
-    private  AndroidTreeView tView;
-    private static Pattern p = Pattern.compile("\\d{4}-\\d{2}-\\d{2}\\.jpg$") ;
+    private AndroidTreeView tView;
+    private static Pattern p = Pattern.compile("\\d{4}-\\d{2}-\\d{2}\\.jpg$");
 
     @Override
     protected void onCreate(@Nullable Bundle savedInstanceState) {
@@ -38,51 +47,44 @@ public class DiaryQueryActivity extends AppCompatActivity {
 
         ActionBar actionBar = getSupportActionBar();
         actionBar.setDisplayHomeAsUpEnabled(true);
-        actionBar.setHomeButtonEnabled(true);
+        //actionBar.setIcon(R.mipmap.diary);
+        //actionBar.setDisplayShowHomeEnabled(true);
         actionBar.setTitle("日记浏览");
         actionBar.show();
 
         TreeNode root = TreeNode.root();
         loadingTree(root);
         tView = new AndroidTreeView(this, root);
-        tView.setDefaultNodeClickListener(new TreeNode.TreeNodeClickListener(){
-            @Override
-            public void onClick(TreeNode node, Object value) {
-                DiaryTreeHolder.DiaryTreeItem diaryTreeItem = (DiaryTreeHolder.DiaryTreeItem) value;
-                if(node.isLeaf()){
-                    Toast.makeText(DiaryQueryActivity.this, "照片"+diaryTreeItem.getFileName()+"被点击", Toast.LENGTH_SHORT).show();
-                }else{
-                    ((DiaryTreeHolder)node.getViewHolder()).changeFolderIcon(node,diaryTreeItem,false);
-                }
-            }
-        });
+        tView.setDefaultNodeClickListener(new DiaryTreeNodeClickListener());
+        tView.setDefaultNodeLongClickListener(new DiaryTreeNodeLongClickListener(this));
         tView.setDefaultContainerStyle(R.style.TreeNodeStyleCustom);
         tView.setDefaultViewHolder(DiaryTreeHolder.class);
         FrameLayout.LayoutParams params = new FrameLayout.LayoutParams(FrameLayout.LayoutParams.MATCH_PARENT, FrameLayout.LayoutParams.WRAP_CONTENT);
         //设置顶部,左边布局
-        params.gravity= Gravity.TOP|Gravity.LEFT;
+        params.gravity = Gravity.TOP | Gravity.LEFT;
         expandNode(root);
-        addContentView(tView.getView(),params);
+        addContentView(tView.getView(), params);
     }
 
     private void expandNode(TreeNode node) {
         node.setExpanded(true);
         List<TreeNode> children = node.getChildren();
-        if(node != null && node.size() >0){
+        if (node != null && node.size() > 0) {
             expandNode(children.get(0));
         }
     }
 
-    private void loadingTree( TreeNode root ) {
-        File rootFile = new File( MainActivity.rootDir, MainActivity.FILE_PATH);
+    private void loadingTree(TreeNode root) {
+        File rootFile = new File(MainActivity.rootDir, MainActivity.FILE_PATH);
         File[] roots = orderByName(rootFile.listFiles());
         TreeNode node = null;
-        for( int i = roots.length - 1; i >= 0; i-- ) {
-            node = new TreeNode(new DiaryTreeHolder.DiaryTreeItem(roots[i].getName(),roots[i].getPath()));
+        for (int i = roots.length - 1; i >= 0; i--) {
+            node = new TreeNode(new DiaryTreeHolder.DiaryTreeItem(roots[i].getName(), roots[i].getPath()));
             root.addChild(node);
-            loadingTree( roots[i], node );
+            loadingTree(roots[i], node);
         }
     }
+
     /**
      * 生成树
      *
@@ -90,27 +92,27 @@ public class DiaryQueryActivity extends AppCompatActivity {
      * @param node void
      * @author jin.guo 2016年5月29日
      */
-    private void loadingTree( File root, TreeNode node ) {
-        File[] files = orderByName(root.listFiles()) ;
+    private void loadingTree(File root, TreeNode node) {
+        File[] files = orderByName(root.listFiles());
         TreeNode subNode = null;
-        if( files == null ) {
+        if (files == null) {
             return;
         }
-        for( int i = files.length - 1; i >= 0; i-- ) {
+        for (int i = files.length - 1; i >= 0; i--) {
             String fileName = files[i].getName();
             String filePath = files[i].getPath();
-            if(files[i].isFile() && fileName.endsWith("temp")){
+            if (files[i].isFile() && fileName.endsWith("temp")) {
                 continue;
             }
-            if(files[i].isFile()){
-                if(!p.matcher(fileName).matches()){
+            if (files[i].isFile()) {
+                if (!p.matcher(fileName).matches()) {
                     continue;
                 }
             }
-            subNode = new TreeNode( new DiaryTreeHolder.DiaryTreeItem(fileName,filePath));
+            subNode = new TreeNode(new DiaryTreeHolder.DiaryTreeItem(fileName, filePath));
             node.addChild(subNode);
-            if( files[i].isDirectory() ) {
-                loadingTree( files[i], subNode );
+            if (files[i].isDirectory()) {
+                loadingTree(files[i], subNode);
             }
         }
 
@@ -118,7 +120,7 @@ public class DiaryQueryActivity extends AppCompatActivity {
 
     public static File[] orderByName(File[] files) {
         List<File> fileList = Arrays.asList(files);
-        Collections.sort(fileList, new Comparator< File>() {
+        Collections.sort(fileList, new Comparator<File>() {
             @Override
             public int compare(File o1, File o2) {
                 if (o1.isDirectory() && o2.isFile())
@@ -136,11 +138,48 @@ public class DiaryQueryActivity extends AppCompatActivity {
         if (item != null) {
             switch (item.getItemId()) {
                 case android.R.id.home:
-
                     finish();
                     break;
             }
         }
         return true;
     }
+
+    /**
+     * 树点击事件
+     */
+    public class DiaryTreeNodeClickListener implements TreeNode.TreeNodeClickListener {
+        @Override
+        public void onClick(TreeNode node, Object value) {
+            DiaryTreeHolder.DiaryTreeItem diaryTreeItem = (DiaryTreeHolder.DiaryTreeItem) value;
+            if (node.isLeaf()) {
+                Toast.makeText(DiaryQueryActivity.this, "照片" + diaryTreeItem.getFileName() + "被点击", Toast.LENGTH_SHORT).show();
+            } else {
+                ((DiaryTreeHolder) node.getViewHolder()).changeFolderIcon(node, diaryTreeItem, false);
+            }
+        }
+    }
+
+    public class DiaryTreeNodeLongClickListener implements TreeNode.TreeNodeLongClickListener {
+        private Context context;
+
+        public DiaryTreeNodeLongClickListener(Context context) {
+            this.context = context;
+        }
+
+        @Override
+        public boolean onLongClick(TreeNode node, Object value) {
+            DiaryTreeHolder.DiaryTreeItem diaryTreeItem = (DiaryTreeHolder.DiaryTreeItem) value;
+            if (node.isLeaf()) {
+                if (PropertiesUtil.diaryPassword == null) {
+                    new DiaryLoginDialog(context);
+                }
+                if(PropertiesUtil.diaryPassword != null){
+
+                }
+            }
+            return true;
+        }
+    }
+
 }
