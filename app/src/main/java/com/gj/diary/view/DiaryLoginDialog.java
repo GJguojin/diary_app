@@ -50,7 +50,7 @@ public class DiaryLoginDialog{
                 .setTitle("密码登录")
                 .setView(longinDialogView)       //加载自定义的对话框式样
                 .setPositiveButton("确定", null)
-                .setNeutralButton("取消", null)
+                .setNegativeButton("取消", null)
                 .create();
         diaryLoginDialog.show();
         diaryLoginDialog.getButton(AlertDialog.BUTTON_POSITIVE).setOnClickListener(new View.OnClickListener() {

@@ -71,7 +71,7 @@ public class DiaryCreateDialog {
                 .setTitle("选择生成方式：")
                 .setView(diaryCreateView)       //加载自定义的对话框式样
                 .setPositiveButton("确定", null)
-                .setNeutralButton("取消", null)
+                .setNegativeButton("取消", null)
                 .create();
         diaryCreateDialog.show();
 
