@@ -26,10 +26,8 @@ import android.support.v4.app.ActivityCompat;
 import android.support.v7.app.ActionBar;
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
-import android.support.v7.widget.PopupMenu;
 import android.util.Log;
 import android.view.Menu;
-import android.view.MenuItem;
 import android.view.View;
 import android.widget.Button;
 import android.widget.EditText;
@@ -45,8 +43,6 @@ import com.gj.diary.utils.ImageSplitUtil;
 import com.gj.diary.utils.ImageUtil;
 import com.gj.diary.utils.PropertiesUtil;
 import com.gj.diary.view.DiaryCreateDialog;
-import com.unnamed.b.atv.model.TreeNode;
-import com.unnamed.b.atv.view.AndroidTreeView;
 
 import java.io.File;
 import java.text.SimpleDateFormat;
@@ -236,7 +232,6 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
                         dealDiaryCreateClick(diaryCreateType,dialog.getSplitWidth(),dialog.getSplitHeight());
                     }
                 });
-                dialog.show();
                 break;
             case R.id.diary_text_start:
                 Log.i(TAG, "修改日记时间");

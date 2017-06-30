@@ -6,6 +6,8 @@ import android.os.Bundle;
 import android.support.annotation.IdRes;
 import android.support.annotation.NonNull;
 import android.support.annotation.Nullable;
+import android.support.v7.app.AlertDialog;
+import android.view.LayoutInflater;
 import android.view.View;
 import android.widget.EditText;
 import android.widget.LinearLayout;
@@ -13,12 +15,13 @@ import android.widget.RadioGroup;
 import android.widget.TextView;
 
 import com.gj.diary.R;
+import com.gj.diary.utils.PropertiesUtil;
 
 /**
  * Created by Administrator on 2017/6/26.
  */
 
-public class DiaryCreateDialog extends Dialog {
+public class DiaryCreateDialog {
 
     private RadioGroup radioGroup;
 
@@ -26,29 +29,21 @@ public class DiaryCreateDialog extends Dialog {
 
     private EditText splitCreateH;
 
-    private TextView diaryCreateOk;
-
-    private TextView diaryCreateCancel;
-
     private LinearLayout linearLayout;
 
-    private DiaryCreateDialog diaryCreateDialog;
+    private Context context;
 
     private int diaryCreateType;
 
-    View.OnClickListener diaryCreateOkListener;
+    private AlertDialog diaryCreateDialog;
 
     public DiaryCreateDialog(@NonNull Context context) {
-        super(context);
-    }
-
-    @Override
-    protected void onCreate(Bundle savedInstanceState) {
-        super.onCreate(savedInstanceState);
-        this.setContentView(R.layout.diary_create_dialog);
-        setTitle("选择生成日记方式：");
-        diaryCreateDialog = this;
-        radioGroup =(RadioGroup) this.findViewById(R.id.diary_create_radioGroup);
+        this.context = context;
+        //动态加载布局生成View对象
+        LayoutInflater layoutInflater = LayoutInflater.from(context);
+        View diaryCreateView = layoutInflater.inflate(R.layout.diary_create_dialog, null);
+        //获取布局中的控件
+        radioGroup =(RadioGroup) diaryCreateView.findViewById(R.id.diary_create_radioGroup);
         radioGroup.setOnCheckedChangeListener(new RadioGroup.OnCheckedChangeListener(){
             @Override
             public void onCheckedChanged(RadioGroup radioGroup, @IdRes int checkedId) {
@@ -66,24 +61,26 @@ public class DiaryCreateDialog extends Dialog {
                 }
             }
         });
-        linearLayout = (LinearLayout)this.findViewById(R.id.split_create_wh);
-        splitCreateW = (EditText)this.findViewById(R.id.split_create_w);
-        splitCreateH = (EditText)this.findViewById(R.id.split_create_h);
-        diaryCreateOk = (TextView)this.findViewById(R.id.diary_create_ok);
-        diaryCreateOk.setOnClickListener(diaryCreateOkListener);
+        linearLayout = (LinearLayout)diaryCreateView.findViewById(R.id.split_create_wh);
+        splitCreateW = (EditText)diaryCreateView.findViewById(R.id.split_create_w);
+        splitCreateH = (EditText)diaryCreateView.findViewById(R.id.split_create_h);
 
-        diaryCreateCancel = (TextView)this.findViewById(R.id.diary_create_cancel);
-        diaryCreateCancel.setOnClickListener(new View.OnClickListener(){
-            @Override
-            public void onClick(View view) {
-                diaryCreateDialog.dismiss();
-            }
-        });
+
+        //创建一个AlertDialog对话框
+        diaryCreateDialog = new AlertDialog.Builder(context)
+                .setTitle("选择生成方式：")
+                .setView(diaryCreateView)       //加载自定义的对话框式样
+                .setPositiveButton("确定", null)
+                .setNeutralButton("取消", null)
+                .create();
+        diaryCreateDialog.show();
+
+
     }
 
     public void setDiaryCreateOkListener(@Nullable  View.OnClickListener diaryCreateOkListener) {
         if(diaryCreateOkListener != null){
-            this.diaryCreateOkListener = diaryCreateOkListener;
+            diaryCreateDialog.getButton(AlertDialog.BUTTON_POSITIVE).setOnClickListener(diaryCreateOkListener);
         }
     }
 
@@ -110,4 +107,7 @@ public class DiaryCreateDialog extends Dialog {
         return diaryCreateType;
     }
 
+    public void dismiss() {
+        diaryCreateDialog.dismiss();
+    }
 }
