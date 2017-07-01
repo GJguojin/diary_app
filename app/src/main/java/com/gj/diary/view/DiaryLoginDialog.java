@@ -1,25 +1,15 @@
 package com.gj.diary.view;
 
-import android.app.Dialog;
 import android.content.Context;
-import android.content.DialogInterface;
-import android.os.Bundle;
-import android.support.annotation.IdRes;
-import android.support.annotation.NonNull;
-import android.support.annotation.Nullable;
 import android.support.v7.app.AlertDialog;
-import android.text.Editable;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.widget.EditText;
-import android.widget.LinearLayout;
-import android.widget.RadioGroup;
 import android.widget.TextView;
 
 import com.gj.diary.R;
+import com.gj.diary.activity.DiaryQueryActivity;
 import com.gj.diary.utils.PropertiesUtil;
-
-import java.lang.reflect.Field;
 
 /**
  * Created by Administrator on 2017/6/26.
@@ -27,7 +17,7 @@ import java.lang.reflect.Field;
 
 public class DiaryLoginDialog{
 
-    private Context context;
+    private Context mContext;
 
     private EditText password;
 
@@ -36,7 +26,7 @@ public class DiaryLoginDialog{
     private AlertDialog diaryLoginDialog;
 
     public DiaryLoginDialog(final Context context) {
-        this.context = context;
+        this.mContext = context;
         //动态加载布局生成View对象
         LayoutInflater layoutInflater = LayoutInflater.from(context);
         View longinDialogView = layoutInflater.inflate(R.layout.diary_login_dialog, null);
@@ -64,12 +54,18 @@ public class DiaryLoginDialog{
                     if(!b){
                         result.setText("密码错误！");
                     }else{
+                        PropertiesUtil.diaryPassword =passwordString;
                         diaryLoginDialog.dismiss();
+                        DiaryQueryActivity diaryQueryActivity = (DiaryQueryActivity) context;
+                        diaryQueryActivity.handler.sendEmptyMessage(DiaryQueryActivity.PASSWORD_CHECKED_OK);
                     }
                 }
             }
         });
     }
 
+    public void show(){
+        diaryLoginDialog.show();
+    }
 
 }

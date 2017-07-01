@@ -38,24 +38,10 @@ public class DiaryTreeHolder extends TreeNode.BaseNodeViewHolder<DiaryTreeHolder
     public View createNodeView(TreeNode node, DiaryTreeItem value) {
         final LayoutInflater inflater = LayoutInflater.from(context);
         if(node.isLeaf()){
-            if(value.fileImg  == null){
-                BitmapFactory.Options newOpts = new BitmapFactory.Options();
-                newOpts.inSampleSize = 4;
-                Bitmap bitmap = BitmapFactory.decodeFile(value.filePath,newOpts);
-                bitmap = MainActivity.getRoundedCornerBitmap(bitmap, 15);
-                value.setFileImg(bitmap);
-            }
             pictureView = inflater.inflate(R.layout.diary_query_pictue, null, false);
-            DiaryImageView picture = (DiaryImageView)pictureView.findViewById(R.id.diary_query_picture);
-            picture.setImageBitmap(value.fileImg);
-
-            final TextView pictureText = (TextView) pictureView.findViewById(R.id.diary_node_value);
-            String fileName = value.getFileName();
-            if(fileName.endsWith("jpg")){
-                fileName = fileName.substring(0,10);
-            }
-            pictureText.setText(fileName);
-
+            DiaryPictureLoadingThread thread = new DiaryPictureLoadingThread(value);
+            Thread t1 = new Thread(thread);
+            t1.start();
             return pictureView;
         }else{
             if(forderView == null){
@@ -131,6 +117,32 @@ public class DiaryTreeHolder extends TreeNode.BaseNodeViewHolder<DiaryTreeHolder
 
         public Bitmap getFileImg() {
             return fileImg;
+        }
+    }
+
+    class DiaryPictureLoadingThread implements Runnable {
+        private DiaryTreeItem value;
+        public DiaryPictureLoadingThread(DiaryTreeItem value) {
+            this.value = value;
+        }
+        @Override
+        public void run() {
+            if(value.fileImg  == null){
+                BitmapFactory.Options newOpts = new BitmapFactory.Options();
+                newOpts.inSampleSize = 4;
+                Bitmap bitmap = BitmapFactory.decodeFile(value.filePath,newOpts);
+                bitmap = MainActivity.getRoundedCornerBitmap(bitmap, 15);
+                value.setFileImg(bitmap);
+            }
+            DiaryImageView picture = (DiaryImageView)pictureView.findViewById(R.id.diary_query_picture);
+            picture.setImageBitmap(value.fileImg);
+
+            final TextView pictureText = (TextView) pictureView.findViewById(R.id.diary_node_value);
+            String fileName = value.getFileName();
+            if(fileName.endsWith("jpg")){
+                fileName = fileName.substring(0,10);
+            }
+            pictureText.setText(fileName);
         }
     }
 }

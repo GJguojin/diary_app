@@ -2,6 +2,8 @@ package com.gj.diary.activity;
 
 import android.content.Context;
 import android.os.Bundle;
+import android.os.Handler;
+import android.os.Message;
 import android.support.annotation.Nullable;
 import android.support.v7.app.ActionBar;
 import android.support.v7.app.AlertDialog;
@@ -16,7 +18,9 @@ import android.widget.Toast;
 
 import com.gj.diary.R;
 import com.gj.diary.holder.DiaryTreeHolder;
+import com.gj.diary.utils.DialogUtils;
 import com.gj.diary.utils.PropertiesUtil;
+import com.gj.diary.view.DiaryContentDialog;
 import com.gj.diary.view.DiaryLoginDialog;
 import com.unnamed.b.atv.model.TreeNode;
 import com.unnamed.b.atv.view.AndroidTreeView;
@@ -37,8 +41,27 @@ import java.util.regex.Pattern;
 
 public class DiaryQueryActivity extends AppCompatActivity {
 
+    public final static int PASSWORD_CHECKED_OK = 0;
+
     private AndroidTreeView tView;
+
     private static Pattern p = Pattern.compile("\\d{4}-\\d{2}-\\d{2}\\.jpg$");
+
+    private static DiaryTreeHolder.DiaryTreeItem nowDiaryTreeItem;
+
+    //定义Handler对象
+    public Handler handler = new Handler() {
+        @Override
+        //当有消息发送出来的时候就执行Handler的这个方法
+        public void handleMessage(Message msg) {
+            super.handleMessage(msg);
+            switch (msg.what) {
+                case PASSWORD_CHECKED_OK:
+                    new DiaryContentDialog(DiaryQueryActivity.this,nowDiaryTreeItem);
+                    break;
+            }
+        }
+    };
 
     @Override
     protected void onCreate(@Nullable Bundle savedInstanceState) {
@@ -171,11 +194,12 @@ public class DiaryQueryActivity extends AppCompatActivity {
         public boolean onLongClick(TreeNode node, Object value) {
             DiaryTreeHolder.DiaryTreeItem diaryTreeItem = (DiaryTreeHolder.DiaryTreeItem) value;
             if (node.isLeaf()) {
+                nowDiaryTreeItem = diaryTreeItem;
                 if (PropertiesUtil.diaryPassword == null) {
-                    new DiaryLoginDialog(context);
-                }
-                if(PropertiesUtil.diaryPassword != null){
-
+                    DiaryLoginDialog diaryLoginDialog = new DiaryLoginDialog(context);
+                    diaryLoginDialog.show();
+                }else{
+                    handler.sendEmptyMessage(PASSWORD_CHECKED_OK);
                 }
             }
             return true;
