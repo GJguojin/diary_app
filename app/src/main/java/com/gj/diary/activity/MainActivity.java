@@ -28,6 +28,7 @@ import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
 import android.util.Log;
 import android.view.Menu;
+import android.view.MenuItem;
 import android.view.View;
 import android.widget.Button;
 import android.widget.EditText;
@@ -42,6 +43,7 @@ import com.gj.diary.utils.DialogUtils;
 import com.gj.diary.utils.ImageSplitUtil;
 import com.gj.diary.utils.ImageUtil;
 import com.gj.diary.utils.PropertiesUtil;
+import com.gj.diary.view.DiaryChangePassDialog;
 import com.gj.diary.view.DiaryCreateDialog;
 
 import java.io.File;
@@ -84,14 +86,14 @@ public class MainActivity extends DiaryBaseActivity implements View.OnClickListe
     private DiaryCreateDialog dialog;
 
     //定义Handler对象
-    private Handler handler = new Handler() {
+    public Handler handler = new Handler() {
         @Override
         //当有消息发送出来的时候就执行Handler的这个方法
         public void handleMessage(Message msg) {
             super.handleMessage(msg);
             //只要执行到这里就关闭对话框
             DialogUtils.closeDialog(loadDialog);
-            if(dialog !=  null){
+            if (dialog != null) {
                 dialog.dismiss();
             }
             switch (msg.what) {
@@ -106,6 +108,9 @@ public class MainActivity extends DiaryBaseActivity implements View.OnClickListe
                     break;
                 case 3:
                     Toast.makeText(MainActivity.this, "请先选择照片", Toast.LENGTH_SHORT).show();
+                    break;
+                case 4:
+                    Toast.makeText(MainActivity.this, "修改密码成功", Toast.LENGTH_SHORT).show();
                     break;
             }
         }
@@ -129,10 +134,8 @@ public class MainActivity extends DiaryBaseActivity implements View.OnClickListe
         setContentView(R.layout.activity_main);
 
         ActionBar actionBar = getSupportActionBar();
-        //actionBar.setHomeButtonEnabled(true);
         actionBar.setIcon(R.mipmap.diary);
         actionBar.setDisplayShowHomeEnabled(true);
-        //actionBar.setLogo(R.mipmap.diary);
         actionBar.setTitle("日记制作");
         actionBar.show();
 
@@ -178,8 +181,24 @@ public class MainActivity extends DiaryBaseActivity implements View.OnClickListe
     @Override
     public boolean onCreateOptionsMenu(Menu menu) {
         // Inflate the menu; this adds items to the action bar if it is present.
-        //getMenuInflater().inflate(R.menu.diary_create_menu, menu);
+        getMenuInflater().inflate(R.menu.main_menu, menu);
         return true;
+    }
+
+    @Override
+    public boolean onOptionsItemSelected(MenuItem item) {
+
+        switch (item.getItemId()){
+            case R.id.chang_login_pass_menu :
+                new DiaryChangePassDialog(this,"1");
+                break;
+            case R.id.chang_photo_pass_menu :
+                new DiaryChangePassDialog(this,"2");
+                break;
+            default:
+                break;
+        }
+        return super.onOptionsItemSelected(item);
     }
 
 
@@ -191,7 +210,6 @@ public class MainActivity extends DiaryBaseActivity implements View.OnClickListe
                 if (data == null) {
                     return;
                 }
-
                 picturePath = getRealFilePath(this, data.getData());
                 BitmapFactory.Options newOpts = new BitmapFactory.Options();
                 newOpts.inSampleSize = 5;
@@ -218,18 +236,18 @@ public class MainActivity extends DiaryBaseActivity implements View.OnClickListe
         switch (id) {
             case R.id.diary_query:
                 Log.i(TAG, "日记查看");
-                Intent diaryQueryIntent =new Intent();
+                Intent diaryQueryIntent = new Intent();
                 diaryQueryIntent.setClass(MainActivity.this, DiaryQueryActivity.class);
-               //启动
+                //启动
                 MainActivity.this.startActivity(diaryQueryIntent);
                 break;
             case R.id.diray_create:
-                dialog =  new DiaryCreateDialog(this);
-                dialog.setDiaryCreateOkListener(new View.OnClickListener(){
+                dialog = new DiaryCreateDialog(this);
+                dialog.setDiaryCreateOkListener(new View.OnClickListener() {
                     @Override
                     public void onClick(View view) {
                         int diaryCreateType = dialog.getDiaryCreateType();
-                        dealDiaryCreateClick(diaryCreateType,dialog.getSplitWidth(),dialog.getSplitHeight());
+                        dealDiaryCreateClick(diaryCreateType, dialog.getSplitWidth(), dialog.getSplitHeight());
                     }
                 });
                 break;
@@ -240,7 +258,7 @@ public class MainActivity extends DiaryBaseActivity implements View.OnClickListe
                     @Override
                     public void onDateSet(DatePicker view, int year, int monthOfYear, int dayOfMonth) {
                         try {
-                            dateString = "" + year + "-" + (monthOfYear+1) + "-" + dayOfMonth;
+                            dateString = "" + year + "-" + (monthOfYear + 1) + "-" + dayOfMonth;
                             Date date = sdf1.parse(dateString);
                             dateString = sdf1.format(date);
                             diaryTextStartText.setText(diaryStartText.replace("[date]", sdf.format(date)));
@@ -262,7 +280,7 @@ public class MainActivity extends DiaryBaseActivity implements View.OnClickListe
 
 
     // 菜单项被选择事件
-    public boolean dealDiaryCreateClick(final int itemid,final int splitWidth,final int splitHeight) {
+    public boolean dealDiaryCreateClick(final int itemid, final int splitWidth, final int splitHeight) {
         Log.i(TAG, "日记生成开始.....");
         verifyStoragePermissions(this);
         if (picturePath == null) {
@@ -285,7 +303,7 @@ public class MainActivity extends DiaryBaseActivity implements View.OnClickListe
         file = new File(file, dateString + ".jpg");
         loadDialog = DialogUtils.createLoadingDialog(MainActivity.this, "请稍候...");
 
-        DiaryCreateThread thread = new DiaryCreateThread(this, file, text, itemid,splitWidth,splitHeight);
+        DiaryCreateThread thread = new DiaryCreateThread(this, file, text, itemid, splitWidth, splitHeight);
         Thread t1 = new Thread(thread);
         t1.start();
         return true;
@@ -299,13 +317,13 @@ public class MainActivity extends DiaryBaseActivity implements View.OnClickListe
         private int splitWidth;
         private int splitHeight;
 
-        DiaryCreateThread(MainActivity content, File file, String text, int itemId,int splitWidth,int splitHeight) {
+        DiaryCreateThread(MainActivity content, File file, String text, int itemId, int splitWidth, int splitHeight) {
             this.file = file;
             this.text = text;
             this.itemId = itemId;
             this.content = content;
-            this.splitHeight = splitHeight==0?50:splitHeight;
-            this.splitWidth = splitWidth == 0?50:splitWidth;
+            this.splitHeight = splitHeight == 0 ? 50 : splitHeight;
+            this.splitWidth = splitWidth == 0 ? 50 : splitWidth;
         }
 
         @Override

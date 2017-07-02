@@ -1,0 +1,12 @@
+<menu xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:tools="http://schemas.android.com/tools"
+    tools:context="activity.MainActivity">
+    <item
+        android:id="@+id/chang_login_pass_menu"
+        android:title="修改登录密码" />
+
+    <item
+        android:id="@+id/chang_photo_pass_menu"
+        android:title="修改解析密码" />
+
+</menu>
