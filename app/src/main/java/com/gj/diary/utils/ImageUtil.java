@@ -5,6 +5,9 @@ import android.graphics.BitmapFactory;
 import android.graphics.Matrix;
 import android.util.Log;
 
+import com.gj.diary.activity.MainActivity;
+
+import java.io.BufferedReader;
 import java.io.BufferedWriter;
 import java.io.ByteArrayInputStream;
 import java.io.ByteArrayOutputStream;
@@ -13,6 +16,7 @@ import java.io.FileInputStream;
 import java.io.FileNotFoundException;
 import java.io.FileOutputStream;
 import java.io.IOException;
+import java.io.InputStreamReader;
 import java.io.OutputStreamWriter;
 import java.io.RandomAccessFile;
 import java.util.ArrayList;
@@ -228,13 +232,13 @@ public class ImageUtil {
 		bufferedWriter.close();
 	}
 	
-/*	public static File getPhotoMessage(String readPath,String key) throws Exception{
+	public static File getPhotoMessage(String readPath,String key) throws Exception{
 		if(key == null || "".equals( key )){
 			return null;
 		}
 		key = key.substring( 8,32 );
 		BufferedReader reader = new BufferedReader( new InputStreamReader( new FileInputStream(readPath) ) );
-		File file = new File(DiaryUtil.outerConfigPath+"tempPhoto" );
+		File file = new File(MainActivity.rootDir,MainActivity.DF_BITMAP_PATH);
 		if( !file.exists() ) {
 			file.createNewFile();
 		}
@@ -256,7 +260,7 @@ public class ImageUtil {
 		out.flush();
 		out.close();
 		return file;
-	}*/
+	}
 	
 	public static void main( String[] args ) throws Exception {
 		String returnMessage="";

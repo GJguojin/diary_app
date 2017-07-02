@@ -61,7 +61,7 @@ public class MainActivity extends DiaryBaseActivity implements View.OnClickListe
     private static final String TAG = "MainActivity";
     private static final String IMAGE_UNSPECIFIED = "image/*";
     public static String FILE_PATH = "/diary/日记/picture/";
-    private static String DF_BITMAP_PATH = "/diary/defaultBitmap.jpg";
+    public static String DF_BITMAP_PATH = "/diary/defaultBitmap.jpg";
 
     private static String diaryStartText = "\t\t\t\t这张照片还记得吗？这一天是[date],";
     private static SimpleDateFormat sdf = new SimpleDateFormat("yyyy年MM月dd日");

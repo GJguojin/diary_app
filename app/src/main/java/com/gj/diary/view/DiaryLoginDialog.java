@@ -25,8 +25,11 @@ public class DiaryLoginDialog{
 
     private AlertDialog diaryLoginDialog;
 
-    public DiaryLoginDialog(final Context context) {
+    private String type;
+
+    public DiaryLoginDialog(final Context context, final String type) {
         this.mContext = context;
+        this.type = type;
         //动态加载布局生成View对象
         LayoutInflater layoutInflater = LayoutInflater.from(context);
         View longinDialogView = layoutInflater.inflate(R.layout.diary_login_dialog, null);
@@ -36,12 +39,17 @@ public class DiaryLoginDialog{
 
 
         //创建一个AlertDialog对话框
-        diaryLoginDialog = new AlertDialog.Builder(context)
-                .setTitle("密码登录")
+
+        AlertDialog.Builder build = new AlertDialog.Builder(context)
                 .setView(longinDialogView)       //加载自定义的对话框式样
                 .setPositiveButton("确定", null)
-                .setNegativeButton("取消", null)
-                .create();
+                .setNegativeButton("取消", null);
+        if("1".equals(type)){
+            build.setTitle("登录密码");
+        }else{
+            build.setTitle("解析密码");
+        }
+        diaryLoginDialog = build.create();
         diaryLoginDialog.show();
         diaryLoginDialog.getButton(AlertDialog.BUTTON_POSITIVE).setOnClickListener(new View.OnClickListener() {
             @Override
@@ -50,14 +58,18 @@ public class DiaryLoginDialog{
                 if(passwordString == null || "".equals(passwordString)){
                     result.setText("密码不能为空！");
                 }else{
-                    boolean b = PropertiesUtil.checkPassword(context, passwordString, "1");
+                    boolean b = PropertiesUtil.checkPassword(context, passwordString,type);
                     if(!b){
                         result.setText("密码错误！");
                     }else{
-                        PropertiesUtil.diaryPassword =passwordString;
                         diaryLoginDialog.dismiss();
                         DiaryQueryActivity diaryQueryActivity = (DiaryQueryActivity) context;
-                        diaryQueryActivity.handler.sendEmptyMessage(DiaryQueryActivity.PASSWORD_CHECKED_OK);
+                        if("1".equals(type)){
+                            PropertiesUtil.diaryPassword =passwordString;
+                            diaryQueryActivity.handler.sendEmptyMessage(DiaryQueryActivity.PASSWORD_CHECKED_OK);
+                        } else{
+                            diaryQueryActivity.handler.sendEmptyMessage(DiaryQueryActivity.PASSWORD_PHOTO_OK);
+                        }
                     }
                 }
             }

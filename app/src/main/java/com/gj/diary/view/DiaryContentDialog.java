@@ -1,13 +1,16 @@
 package com.gj.diary.view;
 
 import android.content.Context;
+import android.content.Intent;
 import android.support.v7.app.AlertDialog;
 import android.view.LayoutInflater;
 import android.view.View;
+import android.widget.Button;
 import android.widget.TextView;
 import android.widget.Toast;
 
 import com.gj.diary.R;
+import com.gj.diary.activity.DiaryImageZoomActivity;
 import com.gj.diary.holder.DiaryTreeHolder;
 import com.gj.diary.utils.ImageUtil;
 import com.gj.diary.utils.PropertiesUtil;
@@ -27,12 +30,14 @@ public class DiaryContentDialog {
 
     private AlertDialog diaryContentDialog;
 
+    private Map<String, String> message;
+
     public DiaryContentDialog(final Context context,final DiaryTreeHolder.DiaryTreeItem diaryTreeItem) {
         this.context = context;
         if(diaryTreeItem == null){
             Toast.makeText(context, "获取日记信息失败", Toast.LENGTH_SHORT).show();
         }
-        Map<String, String> message = ImageUtil.getMessage(diaryTreeItem.getFilePath());
+        message = ImageUtil.getMessage(diaryTreeItem.getFilePath());
         String fileName = diaryTreeItem.getFileName().substring(0,10);
         String diaryMessage = message.get("message");
         if(message == null ||diaryMessage == null){
@@ -61,7 +66,22 @@ public class DiaryContentDialog {
         }
         diaryContentDialog =  builder.create();
         diaryContentDialog.show();
+
+        diaryContentDialog.getButton(AlertDialog.BUTTON_NEUTRAL).setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+                new DiaryLoginDialog(context, "2");
+
+       /*         Intent intent = new Intent(context, DiaryImageZoomActivity.class);
+                intent.putExtra("image", diaryTreeItem.getFilePath());
+                intent.putExtra("type","url");
+                intent.putExtra("name", ((Button)view).getText());
+                context.startActivity(intent);*/
+            }
+        });
+
     }
+
 
 
 }

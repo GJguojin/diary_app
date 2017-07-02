@@ -1,11 +1,19 @@
 package com.gj.diary.activity;
 
+import android.graphics.Bitmap;
+import android.graphics.BitmapFactory;
 import android.os.Bundle;
 import android.text.TextUtils;
 
 import com.gj.diary.R;
+import com.gj.diary.utils.ImageSplitUtil;
+import com.gj.diary.utils.ImageUtil;
+import com.gj.diary.utils.PropertiesUtil;
 import com.gj.diary.view.gallery.DraftFinishView;
 import com.gj.diary.view.gallery.ZoomImageView;
+
+import java.io.File;
+import java.util.Map;
 
 
 /**
@@ -63,9 +71,29 @@ public class DiaryImageZoomActivity extends DiaryBaseActivity {
         getSupportActionBar().setTitle(titleName);
 
         if (imageType.equals("url")) {
-            zoomImageView.setImageResource(R.mipmap.ic_launcher);
+            if (PropertiesUtil.diaryPassword != null) {
+                try {
+                    Map<String, String> message = ImageUtil.getMessage(imageResource);
+                    String keyString = message.get("key");
+                    if (keyString.endsWith("TRUE")) {
+                        File photoMessage = ImageUtil.getPhotoMessage(imageResource, keyString);
+                        Bitmap bitmap = BitmapFactory.decodeFile(photoMessage.getPath());
+                        zoomImageView.setImageBitmap(bitmap);
+                    } else if (keyString.endsWith("TRUE1")) {
+                        Bitmap bitmap = ImageSplitUtil.mergeImage(imageResource, keyString);
+                        zoomImageView.setImageBitmap(bitmap);
+                    } else {
+                        zoomImageView.setImageResource(R.drawable.background);
+                    }
+                } catch (Exception e) {
+                    e.printStackTrace();
+                    zoomImageView.setImageResource(R.drawable.background);
+                }
+            }else{
+                zoomImageView.setImageResource(R.drawable.background);
+            }
         } else {
-            zoomImageView.setImageResource(R.mipmap.ic_launcher);
+            zoomImageView.setImageResource(R.drawable.background);
         }
         galleryHolder.setZoomView(zoomImageView);
     }

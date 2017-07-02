@@ -14,6 +14,7 @@ import android.util.Log;
 import android.view.Gravity;
 import android.view.MenuItem;
 import android.view.Window;
+import android.widget.Button;
 import android.widget.EditText;
 import android.widget.FrameLayout;
 import android.widget.Toast;
@@ -47,6 +48,8 @@ public class DiaryQueryActivity extends DiaryBaseActivity  {
 
     public final static int PASSWORD_CHECKED_OK = 0;
 
+    public final static int PASSWORD_PHOTO_OK = 1;
+
     private AndroidTreeView tView;
 
     private static Pattern p = Pattern.compile("\\d{4}-\\d{2}-\\d{2}\\.jpg$");
@@ -62,6 +65,13 @@ public class DiaryQueryActivity extends DiaryBaseActivity  {
             switch (msg.what) {
                 case PASSWORD_CHECKED_OK:
                     new DiaryContentDialog(DiaryQueryActivity.this,nowDiaryTreeItem);
+                    break;
+                case PASSWORD_PHOTO_OK:
+                    Intent intent = new Intent(mContext, DiaryImageZoomActivity.class);
+                    intent.putExtra("image", nowDiaryTreeItem.getFilePath());
+                    intent.putExtra("type","url");
+                    intent.putExtra("name", "图片恢复");
+                    startActivity(intent);
                     break;
             }
         }
@@ -233,7 +243,7 @@ public class DiaryQueryActivity extends DiaryBaseActivity  {
             if (node.isLeaf()) {
                 nowDiaryTreeItem = diaryTreeItem;
                 if (PropertiesUtil.diaryPassword == null) {
-                    DiaryLoginDialog diaryLoginDialog = new DiaryLoginDialog(context);
+                    DiaryLoginDialog diaryLoginDialog = new DiaryLoginDialog(context,"1");
                     diaryLoginDialog.show();
                 }else{
                     handler.sendEmptyMessage(PASSWORD_CHECKED_OK);
