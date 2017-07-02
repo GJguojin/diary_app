@@ -3,10 +3,13 @@ package com.gj.diary.holder;
 import android.content.Context;
 import android.graphics.Bitmap;
 import android.graphics.BitmapFactory;
+import android.os.Handler;
+import android.os.Message;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.widget.ImageView;
 import android.widget.TextView;
+import android.widget.Toast;
 
 import com.gj.diary.activity.MainActivity;
 import com.gj.diary.view.DiaryImageView;
@@ -23,19 +26,42 @@ public class DiaryTreeHolder extends TreeNode.BaseNodeViewHolder<DiaryTreeHolder
     public DiaryTreeHolder(Context context) {
         super(context);
     }
-
-    private  ImageView folder;
-    private  ImageView arrow;
     private static Bitmap openFolder;
     private static  Bitmap closeFolder;
     private static Bitmap arrowDown;
     private static  Bitmap arrowRight;
-    private   View forderView;
-    private   View pictureView;
+
+    private  ImageView folder;
+    private  ImageView arrow;
+    private  View forderView;
+    private  View pictureView;
     private  TextView diaryFolderValue;
+    private DiaryTreeItem diaryTreeItem;
+
+    private Handler handler = new Handler() {
+        @Override
+        //当有消息发送出来的时候就执行Handler的这个方法
+        public void handleMessage(Message msg) {
+            super.handleMessage(msg);
+            switch (msg.what) {
+                case 0:
+                    final DiaryImageView picture = (DiaryImageView)pictureView.findViewById(R.id.diary_query_picture);
+                    picture.setImageBitmap(diaryTreeItem.fileImg);
+
+                    final TextView pictureText = (TextView) pictureView.findViewById(R.id.diary_node_value);
+                    String fileName = diaryTreeItem.getFileName();
+                    if(fileName.endsWith("jpg")){
+                        fileName = fileName.substring(0,10);
+                    }
+                    pictureText.setText(fileName);
+                    break;
+            }
+        }
+    };
 
     @Override
     public View createNodeView(TreeNode node, DiaryTreeItem value) {
+        diaryTreeItem = value;
         final LayoutInflater inflater = LayoutInflater.from(context);
         if(node.isLeaf()){
             pictureView = inflater.inflate(R.layout.diary_query_pictue, null, false);
@@ -121,7 +147,7 @@ public class DiaryTreeHolder extends TreeNode.BaseNodeViewHolder<DiaryTreeHolder
     }
 
     class DiaryPictureLoadingThread implements Runnable {
-        private DiaryTreeItem value;
+        private final DiaryTreeItem value;
         public DiaryPictureLoadingThread(DiaryTreeItem value) {
             this.value = value;
         }
@@ -134,7 +160,9 @@ public class DiaryTreeHolder extends TreeNode.BaseNodeViewHolder<DiaryTreeHolder
                 bitmap = MainActivity.getRoundedCornerBitmap(bitmap, 15);
                 value.setFileImg(bitmap);
             }
-            DiaryImageView picture = (DiaryImageView)pictureView.findViewById(R.id.diary_query_picture);
+            handler.sendEmptyMessage(0);
+/*
+            final DiaryImageView picture = (DiaryImageView)pictureView.findViewById(R.id.diary_query_picture);
             picture.setImageBitmap(value.fileImg);
 
             final TextView pictureText = (TextView) pictureView.findViewById(R.id.diary_node_value);
@@ -142,7 +170,7 @@ public class DiaryTreeHolder extends TreeNode.BaseNodeViewHolder<DiaryTreeHolder
             if(fileName.endsWith("jpg")){
                 fileName = fileName.substring(0,10);
             }
-            pictureText.setText(fileName);
+            pictureText.setText(fileName);*/
         }
     }
 }

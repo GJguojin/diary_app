@@ -2,4 +2,32 @@
     <!-- Default screen margins, per the Android Design guidelines. -->
     <dimen name="activity_horizontal_margin">16dp</dimen>
     <dimen name="activity_vertical_margin">16dp</dimen>
+
+    <dimen name="common_layout_height">45dp</dimen>
+    <dimen name="actionbar_text_size">17sp</dimen>
+    <dimen name="fab_margin">16dp</dimen>
+    <dimen name="divider_height">0.5dp</dimen>
+
+    <dimen name="personal_sign_width">300px</dimen>
+    <dimen name="personal_sign_height">120px</dimen>
+
+    <dimen name="pop_width">106dp</dimen>
+    <dimen name="pop_height">37dp</dimen>
+    <dimen name="side_bar_textsize">11sp</dimen>
+    <dimen name="common_text_size_10">10sp</dimen>
+    <dimen name="common_text_size_12">12sp</dimen>
+    <dimen name="common_text_size_14">14sp</dimen>
+    <dimen name="common_list_divider_margin_left">15dp</dimen>
+    <dimen name="common_list_icon_margin_left">15dp</dimen>
+    <dimen name="size_default_height">295dp</dimen>
+
+    <dimen name="dp_35">35dp</dimen>
+    <dimen name="dp_40">40dp</dimen>
+    <dimen name="dp_45">45dp</dimen>
+    <dimen name="dp_50">50dp</dimen>
+    <dimen name="home_nav_height">295dp</dimen>
+
+    <dimen name="float_marginBottom">20dp</dimen>
+    <dimen name="float_marginRight">20dp</dimen>
+    <dimen name="contract_rv_container_padding_bottom">60dp</dimen>
 </resources>

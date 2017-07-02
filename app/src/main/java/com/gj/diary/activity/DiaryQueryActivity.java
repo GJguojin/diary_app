@@ -1,6 +1,7 @@
 package com.gj.diary.activity;
 
 import android.content.Context;
+import android.content.Intent;
 import android.os.Bundle;
 import android.os.Handler;
 import android.os.Message;
@@ -9,6 +10,7 @@ import android.support.v7.app.ActionBar;
 import android.support.v7.app.AlertDialog;
 import android.support.v7.app.AppCompatActivity;
 import android.text.InputType;
+import android.util.Log;
 import android.view.Gravity;
 import android.view.MenuItem;
 import android.view.Window;
@@ -16,6 +18,7 @@ import android.widget.EditText;
 import android.widget.FrameLayout;
 import android.widget.Toast;
 
+import com.gj.diary.MyApp;
 import com.gj.diary.R;
 import com.gj.diary.holder.DiaryTreeHolder;
 import com.gj.diary.utils.DialogUtils;
@@ -25,10 +28,9 @@ import com.gj.diary.view.DiaryLoginDialog;
 import com.unnamed.b.atv.model.TreeNode;
 import com.unnamed.b.atv.view.AndroidTreeView;
 
-import org.xmlpull.v1.XmlPullParserException;
 
 import java.io.File;
-import java.io.IOException;
+import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Collections;
 import java.util.Comparator;
@@ -39,7 +41,9 @@ import java.util.regex.Pattern;
  * Created by Administrator on 2017/6/26.
  */
 
-public class DiaryQueryActivity extends AppCompatActivity {
+public class DiaryQueryActivity extends DiaryBaseActivity  {
+
+    protected Context mContext;
 
     public final static int PASSWORD_CHECKED_OK = 0;
 
@@ -64,10 +68,22 @@ public class DiaryQueryActivity extends AppCompatActivity {
     };
 
     @Override
+    protected boolean customEnterAnimation() {
+        overridePendingTransition(android.R.anim.fade_in, android.R.anim.fade_out);
+        return true;
+    }
+
+    @Override
+    protected boolean customExitAnimation() {
+        overridePendingTransition(android.R.anim.fade_in, android.R.anim.fade_out);
+        return true;
+    }
+
+    @Override
     protected void onCreate(@Nullable Bundle savedInstanceState) {
         setContentView(R.layout.activity_diary_query);
         super.onCreate(savedInstanceState);
-
+        mContext =MyApp.getAppContext();
         ActionBar actionBar = getSupportActionBar();
         actionBar.setDisplayHomeAsUpEnabled(true);
         //actionBar.setIcon(R.mipmap.diary);
@@ -176,7 +192,28 @@ public class DiaryQueryActivity extends AppCompatActivity {
         public void onClick(TreeNode node, Object value) {
             DiaryTreeHolder.DiaryTreeItem diaryTreeItem = (DiaryTreeHolder.DiaryTreeItem) value;
             if (node.isLeaf()) {
-                Toast.makeText(DiaryQueryActivity.this, "照片" + diaryTreeItem.getFileName() + "被点击", Toast.LENGTH_SHORT).show();
+                String filePath = diaryTreeItem.getFilePath();
+                String fileName = diaryTreeItem.getFileName();
+                File childFile = new File(filePath);
+                File parentFile = childFile.getParentFile();
+                File[] files = parentFile.listFiles();
+                ArrayList<String> imageUrls = new ArrayList<String>();
+                int index = 0;
+                orderByName(files);
+                for(int i=0;i<files.length;i++){
+                    File file = files[i];
+                    String name = file.getName();
+                    if(fileName != null && fileName.equals(name)){
+                        index = i;
+                    }
+                    imageUrls.add(file.getPath());
+                }
+                Intent intent = new Intent(mContext, DiaryGalleryActivity.class);
+                intent.putExtra("imageUrl", imageUrls);
+                intent.putExtra("name", "日记浏览");
+                intent.putExtra("index",index);
+
+                startActivity(intent);
             } else {
                 ((DiaryTreeHolder) node.getViewHolder()).changeFolderIcon(node, diaryTreeItem, false);
             }

@@ -33,4 +33,50 @@
         <!--<item name="android:showDividers">middle</item>-->
         <!--<item name="android:divider">@android:drawable/divider_horizontal_bright</item>-->
     </style>
+
+    <style name="Custom.Actionbar" parent="@style/Widget.AppCompat.ActionBar.Solid">
+        <item name="titleTextStyle">@style/Custom.TextAppearance.Actionbar</item>
+    </style>
+
+    <style name="Custom.TextAppearance.Actionbar" parent="@style/TextAppearance.AppCompat.Widget.ActionBar.Title">
+        <item name="android:textSize">@dimen/actionbar_text_size</item>
+    </style>
+
+    <!-- actionbar标题文字尺寸 -->
+    <style name="ToolbarTitle" parent="@style/TextAppearance.Widget.AppCompat.Toolbar.Title">
+        <item name="android:textSize">@dimen/actionbar_text_size</item>
+    </style>
+
+    <!-- actionbar菜单文字尺寸 -->
+    <style name="ToolbarMenuText" parent="@style/TextAppearance.AppCompat.Menu">
+        <item name="android:textSize">@dimen/actionbar_text_size</item>
+    </style>
+
+    <style name="AppTheme.FullScreen">
+        <item name="android:windowIsTranslucent">true</item>
+        <item name="android:windowFullscreen">true</item>
+        <item name="android:windowContentOverlay">@null</item>
+        <item name="windowNoTitle">true</item>
+    </style>
+
+    <style name="AppTheme.NoActionBar">
+        <item name="windowActionBar">false</item>
+        <item name="windowNoTitle">true</item>
+    </style>
+
+    <style name="AppTheme.Transparent">
+        <item name="android:windowBackground">@android:color/transparent</item>
+        <item name="android:windowIsTranslucent">true</item>
+    </style>
+
+    <style name="AppTheme.Transparent.NoActionBar">
+        <item name="windowActionBar">false</item>
+        <item name="windowNoTitle">true</item>
+    </style>
+
+    <style name="AppTheme.Transparent.FullScreen">
+        <item name="android:windowFullscreen">true</item>
+        <item name="android:windowContentOverlay">@null</item>
+        <item name="windowNoTitle">true</item>
+    </style>
 </resources>
