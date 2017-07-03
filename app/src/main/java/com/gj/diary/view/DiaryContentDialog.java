@@ -3,6 +3,7 @@ package com.gj.diary.view;
 import android.content.Context;
 import android.content.Intent;
 import android.support.v7.app.AlertDialog;
+import android.text.method.ScrollingMovementMethod;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.widget.Button;
@@ -52,6 +53,7 @@ public class DiaryContentDialog {
 
         //获取布局中的控件
         diaryContent = (TextView) longinDialogView.findViewById(R.id.diary_content);
+        diaryContent.setMovementMethod(ScrollingMovementMethod.getInstance());
         diaryContent.setText(diaryMessage);
         //创建一个AlertDialog对话框
 

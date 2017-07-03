@@ -13,7 +13,9 @@
         android:textSize="18dp"
         android:scrollbars="vertical"
         android:minLines="5"
-        android:maxLines="15"
+        android:scrollbarStyle="outsideOverlay"
+        android:padding="2dp"
+        android:maxLines="12"
         />
 
 </LinearLayout>
