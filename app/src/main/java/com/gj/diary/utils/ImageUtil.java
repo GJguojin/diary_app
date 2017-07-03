@@ -238,7 +238,7 @@ public class ImageUtil {
 		}
 		key = key.substring( 8,32 );
 		BufferedReader reader = new BufferedReader( new InputStreamReader( new FileInputStream(readPath) ) );
-		File file = new File(MainActivity.rootDir,MainActivity.DF_BITMAP_PATH);
+		File file = new File(MainActivity.rootDir, MainActivity.FILE_PATH + "temp");
 		if( !file.exists() ) {
 			file.createNewFile();
 		}
