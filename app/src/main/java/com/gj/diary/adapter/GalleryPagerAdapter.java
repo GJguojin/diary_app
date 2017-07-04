@@ -50,9 +50,6 @@ public class GalleryPagerAdapter extends PagerAdapter {
     @Override
     public Object instantiateItem(ViewGroup container, int position) {
         ZoomImageView zoomImage = new ZoomImageView(mContext);
-        /**
-         * 填充展示的图片资源（这里直接展示的样例图）
-         */
         String filepath= imageUrl.get(position);
         Bitmap bitmap = BitmapFactory.decodeFile(filepath);
         if(bitmap != null){

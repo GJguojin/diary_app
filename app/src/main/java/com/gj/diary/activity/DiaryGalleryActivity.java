@@ -125,7 +125,7 @@ public class DiaryGalleryActivity extends DiaryBaseActivity {
 
             @Override
             public void onPageScrollStateChanged(int state) {
-                if(state == 0 && currentItem == 0){
+                if(state == 0 && (currentItem == 0 || currentItem == mAdapter.getCount()-1)){
                     Toast.makeText(DiaryGalleryActivity.this, "到头了", Toast.LENGTH_SHORT).show();
                 }
             }

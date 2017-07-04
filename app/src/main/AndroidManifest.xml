@@ -23,13 +23,11 @@
         <activity
             android:name=".activity.DiaryGalleryActivity"
             android:label="@string/app_name"
-            android:screenOrientation="portrait"
             android:theme="@style/AppTheme.Transparent.NoActionBar" />
 
         <activity
             android:name=".activity.DiaryImageZoomActivity"
             android:label="@string/app_name"
-            android:screenOrientation="portrait"
             android:theme="@style/AppTheme.Transparent" />
     </application>
 
