@@ -31,6 +31,8 @@ public class ImageUtil {
 	
 	public final static String PHOTO_LINE= "***********************************************************************";
 
+	public static final String salt = "diary";
+
 	public static final float W = 2080;//缩放后宽
 	public static final float H = 1168;//缩放后高
 	
@@ -110,6 +112,7 @@ public class ImageUtil {
 	public static void writeMessage(File file,String text,Integer type) throws Exception{
 		text = "2050年的自己：\n"+text;
 		String key = MD5Util.getMd532( text );
+
 		BufferedWriter bufferedWriter = null;
 		bufferedWriter = new BufferedWriter( new OutputStreamWriter( new FileOutputStream( file, true ),"UTF-8"));
 		bufferedWriter.newLine();
@@ -125,9 +128,10 @@ public class ImageUtil {
 		
 		bufferedWriter.newLine();
 		bufferedWriter.write( MESSAGE_LINE );
+		String newkey = salt.toUpperCase()+key;
 		for(String msg : text.split( "\n" )){
 			bufferedWriter.newLine();
-			bufferedWriter.write(DESUtil.Encrypt( msg, key.substring( 0, 24 ).getBytes("UTF-8") ) );
+			bufferedWriter.write(DESUtil.encrypt( msg, newkey.substring( 0, 24 ).getBytes("UTF-8"),"base64" ) );
 		}
 		bufferedWriter.close();
 		file.setReadOnly();
@@ -176,10 +180,11 @@ public class ImageUtil {
 					System.out.println( rf.readLine() );
 				}
 			}
+			key = key.replaceAll( "\n", "" );
+			key = salt.toUpperCase()+key;
 			for(String msg :messages){
 				msg =msg.replaceAll( "\n", "" );
-				key = key.replaceAll( "\n", "" );
-				String decrypt = DESUtil.Decrypt(msg, key.substring(0, 24).getBytes("UTF-8"));
+				String decrypt = new String(DESUtil.decrypt(msg, key.substring(0, 24).getBytes("UTF-8"),"base64"),"UTF-8");
 				if(decrypt.startsWith(" ")){
 					decrypt = "\t\t\t\t\t"+decrypt.trim();
 				}
@@ -208,7 +213,8 @@ public class ImageUtil {
 		bufferedWriter.newLine();
 		bufferedWriter.write( PHOTO_LINE );
 		bufferedWriter.newLine();
-		bufferedWriter.write( DESUtil.Encrypt( splitText, key.substring(8).getBytes("UTF-8") ) );
+		String newKey = salt.toUpperCase()+key.substring(8+salt.length());
+		bufferedWriter.write( DESUtil.encrypt( splitText, newKey.getBytes("UTF-8") ,"base64") );
 		bufferedWriter.newLine();
 		bufferedWriter.write( PHOTO_LINE );
 		bufferedWriter.flush();
@@ -225,9 +231,10 @@ public class ImageUtil {
 		byte buffer[] = new byte[1024*5];
 		bufferedWriter.newLine();
 		bufferedWriter.write( PHOTO_LINE );
+		String newKey = salt.toUpperCase()+key.substring(8+salt.length());
 		while( ( c = in.read( buffer ) ) != -1 ) {
 			bufferedWriter.newLine();
-			bufferedWriter.write( DESUtil.Encrypt( buffer, key.substring(8).getBytes("UTF-8") ) );
+			bufferedWriter.write( DESUtil.encrypt( buffer, newKey.getBytes("UTF-8"),"base64" ) );
 		}
 		bufferedWriter.newLine();
 		bufferedWriter.write( PHOTO_LINE );
@@ -240,7 +247,7 @@ public class ImageUtil {
 		if(key == null || "".equals( key )){
 			return null;
 		}
-		key = key.substring( 8,32 );
+		key = salt.toUpperCase()+key.substring(8+salt.length(),32);
 		BufferedReader reader = new BufferedReader( new InputStreamReader( new FileInputStream(readPath) ) );
 		File file = new File(MainActivity.rootDir, MainActivity.FILE_PATH + "temp");
 		if( !file.exists() ) {
@@ -254,7 +261,7 @@ public class ImageUtil {
 				break;
 			}
 			if(flag){
-				out.write( DESUtil.Decrypt1( line, key.getBytes("UTF-8") ) );
+				out.write( DESUtil.decrypt( line, key.getBytes("UTF-8"),"base64" ) );
 			}
 			if(!flag && line.equals( PHOTO_LINE )){
 				flag =true;
@@ -265,15 +272,6 @@ public class ImageUtil {
 		out.close();
 		return file;
 	}
-	
-	public static void main( String[] args ) throws Exception {
-		String returnMessage="";
-		String msg = "CB7B46347705F063295462350327B3754429584652706EF7593CAB37406CAD6DF9D42179949527F036EA29B62F088F313B223FAB3F9C4A3A42D561F3BACB633D6AAA8A84681C5936082777E1FB05C22EB1CFF5BEFF0AE5BF9ABDF01A1F30B3C03481C1F9A702AB7E7E0D7EF318C99B744A11B9BA9FC28BD1163E1FC4054B6B542C82EE3AFF6C5E708B2528E4C78BEE657F2B4537FF42CB9D791C0AEE348888914FB33FC2DB60A39FF43D03910723A2E58D5B4716F0D191512914D8EFA29FE4B384D0E2D5B6F1C34AA7C9F8618C41C11809F7F614ECF6F49C0407FB6207CA4C64";
-        String key ="13E0787ED11A1E4740F0FCA11AE27B63TRUE";
-        returnMessage = DESUtil.Decrypt( msg, key.substring( 0, 24 ).getBytes("UTF-8") )+"\n"+returnMessage;
-        System.out.println( returnMessage );
 
-	}
-	
 	
 }

@@ -128,6 +128,9 @@ public class DiaryQueryActivity extends DiaryBaseActivity  {
         File[] roots = orderByName(rootFile.listFiles());
         TreeNode node = null;
         for (int i = roots.length - 1; i >= 0; i--) {
+            if(roots[i].isFile() && roots[i].getName().endsWith("temp") ){
+                continue;
+            }
             node = new TreeNode(new DiaryTreeHolder.DiaryTreeItem(roots[i].getName(), roots[i].getPath()));
             root.addChild(node);
             loadingTree(roots[i], node);
@@ -142,6 +145,9 @@ public class DiaryQueryActivity extends DiaryBaseActivity  {
      * @author jin.guo 2016年5月29日
      */
     private void loadingTree(File root, TreeNode node) {
+        if(root.isFile() && root.getName().endsWith("temp") ){
+            return;
+        }
         File[] files = orderByName(root.listFiles());
         TreeNode subNode = null;
         if (files == null) {
@@ -168,6 +174,9 @@ public class DiaryQueryActivity extends DiaryBaseActivity  {
     }
 
     public static File[] orderByName(File[] files) {
+        if(files == null){
+            return new File[]{};
+        }
         List<File> fileList = Arrays.asList(files);
         Collections.sort(fileList, new Comparator<File>() {
             @Override

@@ -22,7 +22,6 @@ public class PropertiesUtil {
 
     public static String diaryPassword;
 
-    private static final String salt = "diary";
 
     private final static String CONFIG_NAME="diaryConfig.properties";
 
@@ -93,15 +92,15 @@ public class PropertiesUtil {
 
             out = context.openFileOutput(CONFIG_NAME, Context.MODE_PRIVATE);
             if (props.getProperty(PASSWORD_DIARY) == null || "".equals(props.getProperty(PASSWORD_DIARY) )) {
-                props.setProperty(PASSWORD_DIARY, MD5Util.getMd532("00000000" + salt));
+                props.setProperty(PASSWORD_DIARY, MD5Util.getMd532("00000000" + ImageUtil.salt));
             }
             if (props.getProperty(PASSWORD_PHOTO)==null || "".equals(props.getProperty(PASSWORD_PHOTO))) {
-                props.setProperty(PASSWORD_PHOTO, MD5Util.getMd532("00000000" + salt));
+                props.setProperty(PASSWORD_PHOTO, MD5Util.getMd532("00000000" + ImageUtil.salt));
             }
             if (PASSWORD_DIARY.equals(keyName)) {
-                props.setProperty(PASSWORD_DIARY, MD5Util.getMd532(keyValue + salt));
+                props.setProperty(PASSWORD_DIARY, MD5Util.getMd532(keyValue + ImageUtil.salt));
             } else if (PASSWORD_PHOTO.equals(keyName)) {
-                props.setProperty(PASSWORD_PHOTO, MD5Util.getMd532(keyValue + salt));
+                props.setProperty(PASSWORD_PHOTO, MD5Util.getMd532(keyValue + ImageUtil.salt));
             } else {
                 props.setProperty(keyName, keyValue);
             }
@@ -146,6 +145,6 @@ public class PropertiesUtil {
         }
     }
     public static String getMd5String(String password){
-        return MD5Util.getMd532( password+salt );
+        return MD5Util.getMd532( password+ImageUtil.salt );
     }
 }
