@@ -46,6 +46,10 @@ public class DiaryTreeHolder extends TreeNode.BaseNodeViewHolder<DiaryTreeHolder
             switch (msg.what) {
                 case 0:
                     final DiaryImageView picture = (DiaryImageView)pictureView.findViewById(R.id.diary_query_picture);
+                    final float ratio = diaryTreeItem.getRatio();
+                    if(!(ratio > 1.7 && ratio<1.8)){
+                        picture.setMRadito(ratio);
+                    }
                     picture.setImageBitmap(diaryTreeItem.fileImg);
 
                     final TextView pictureText = (TextView) pictureView.findViewById(R.id.diary_node_value);
@@ -143,6 +147,10 @@ public class DiaryTreeHolder extends TreeNode.BaseNodeViewHolder<DiaryTreeHolder
 
         public Bitmap getFileImg() {
             return fileImg;
+        }
+
+        public float getRatio(){
+            return (float)1.0*fileImg.getWidth()/fileImg.getHeight();
         }
     }
 

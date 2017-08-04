@@ -64,4 +64,9 @@ public class DiaryImageView extends android.support.v7.widget.AppCompatImageView
         super.onMeasure(widthMeasureSpec, heightMeasureSpec);
     }
 
+    public void setMRadito(float radio){
+        mRatio = radio;
+    }
+
+
 }
