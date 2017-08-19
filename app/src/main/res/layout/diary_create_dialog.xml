@@ -35,6 +35,13 @@
             android:layout_height="wrap_content"
             android:textSize="18dp"
             android:text="切割生成" />
+
+        <RadioButton
+            android:id="@+id/diary_create_storage"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:textSize="18dp"
+            android:text="加密储存" />
     </RadioGroup>
 
 

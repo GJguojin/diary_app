@@ -2,9 +2,11 @@ package com.gj.diary.activity;
 
 import android.Manifest;
 import android.app.Activity;
+import android.app.AlertDialog;
 import android.app.Dialog;
 import android.content.ContentResolver;
 import android.content.Context;
+import android.content.DialogInterface;
 import android.content.Intent;
 import android.content.pm.PackageManager;
 import android.database.Cursor;
@@ -33,10 +35,13 @@ import android.view.View;
 import android.widget.Button;
 import android.widget.EditText;
 import android.widget.ImageView;
+import android.widget.LinearLayout;
+import android.widget.MediaController;
 import android.widget.TextView;
 import android.widget.Toast;
 import android.app.DatePickerDialog;
 import android.widget.DatePicker;
+import android.widget.VideoView;
 
 import com.gj.diary.R;
 import com.gj.diary.utils.DialogUtils;
@@ -62,7 +67,9 @@ public class MainActivity extends DiaryBaseActivity implements View.OnClickListe
 
     private static final String TAG = "MainActivity";
     private static final String IMAGE_UNSPECIFIED = "image/*";
+    private static final String VIDEO_UNSPECIFIED = "video/*";
     public static String FILE_PATH = "/diary/日记/picture/";
+    public static String STORAGE_PATH = "/diary/日记/storage/";
     public static String DF_BITMAP_PATH = "/diary/defaultBitmap.jpg";
 
     private static String diaryStartText = "\t\t\t\t这张照片还记得吗？这一天是[date],";
@@ -80,6 +87,9 @@ public class MainActivity extends DiaryBaseActivity implements View.OnClickListe
 
     private String picturePath;
     private ImageView diaryPicture;
+    private VideoView diaryVideo;
+    private LinearLayout diaryVideoLayout;
+    private MediaController mediaco;
 
     private Dialog loadDialog;
 
@@ -172,10 +182,14 @@ public class MainActivity extends DiaryBaseActivity implements View.OnClickListe
         diaryQueryButton.setOnClickListener(this);
 
         diaryPicture = (ImageView) findViewById(R.id.diary_picture);
+        diaryVideo  = (VideoView) findViewById(R.id.diary_video);
+        diaryVideoLayout = (LinearLayout)findViewById(R.id.diary_video_layout);
+        diaryVideoLayout.setVisibility(View.GONE);
         Bitmap defaultDiaryPicture = BitmapFactory.decodeResource(getResources(), R.drawable.background);
         defaultDiaryPicture = getRoundedCornerBitmap(defaultDiaryPicture, 70);
         diaryPicture.setImageBitmap(defaultDiaryPicture);
         diaryPicture.setOnClickListener(this);
+        diaryVideoLayout.setOnClickListener(this);
     }
 
     @Override
@@ -188,12 +202,12 @@ public class MainActivity extends DiaryBaseActivity implements View.OnClickListe
     @Override
     public boolean onOptionsItemSelected(MenuItem item) {
 
-        switch (item.getItemId()){
-            case R.id.chang_login_pass_menu :
-                new DiaryChangePassDialog(this,"1");
+        switch (item.getItemId()) {
+            case R.id.chang_login_pass_menu:
+                new DiaryChangePassDialog(this, "1");
                 break;
-            case R.id.chang_photo_pass_menu :
-                new DiaryChangePassDialog(this,"2");
+            case R.id.chang_photo_pass_menu:
+                new DiaryChangePassDialog(this, "2");
                 break;
             default:
                 break;
@@ -204,13 +218,15 @@ public class MainActivity extends DiaryBaseActivity implements View.OnClickListe
 
     @Override
     protected void onActivityResult(int requestCode, int resultCode, Intent data) {
+        picturePath = null;
+        if (data == null) {
+            return;
+        }
+        picturePath = getRealFilePath(this, data.getData());
         switch (requestCode) {
             case 1:
-                picturePath = null;
-                if (data == null) {
-                    return;
-                }
-                picturePath = getRealFilePath(this, data.getData());
+                diaryPicture.setVisibility(View.VISIBLE);
+                diaryVideoLayout.setVisibility(View.GONE);
                 BitmapFactory.Options newOpts = new BitmapFactory.Options();
                 newOpts.inSampleSize = 5;
                 Bitmap bitmap = BitmapFactory.decodeFile(picturePath, newOpts);
@@ -222,6 +238,23 @@ public class MainActivity extends DiaryBaseActivity implements View.OnClickListe
                 Log.i(TAG, picturePath);
                 bitmap = getRoundedCornerBitmap(bitmap, 25);
                 diaryPicture.setImageBitmap(bitmap);
+                super.onActivityResult(requestCode, resultCode, data);
+                break;
+            case 2:
+                diaryPicture.setVisibility(View.GONE);
+                diaryVideoLayout.setVisibility(View.VISIBLE);
+                if(mediaco == null){
+                    mediaco=new MediaController(this);
+                }
+                File file=new File(picturePath);
+                if(file.exists()){
+                    //VideoView与MediaController进行关联
+                    diaryVideo.setVideoPath(file.getAbsolutePath());
+                    diaryVideo.setMediaController(mediaco);
+                    mediaco.setMediaPlayer(diaryVideo);
+                    //让VideiView获取焦点
+                    diaryVideo.requestFocus();
+                }
                 super.onActivityResult(requestCode, resultCode, data);
                 break;
             default:
@@ -269,10 +302,25 @@ public class MainActivity extends DiaryBaseActivity implements View.OnClickListe
                 }, now.get(Calendar.YEAR), now.get(Calendar.MONTH), now.get(Calendar.DAY_OF_MONTH)).show();
                 break;
             case R.id.diary_picture:
-                Intent openPicture = new Intent(Intent.ACTION_PICK, null);
-                openPicture.setDataAndType(MediaStore.Images.Media.EXTERNAL_CONTENT_URI, IMAGE_UNSPECIFIED);
-                //openPicture.setAction(Intent.ACTION_GET_CONTENT);
-                startActivityForResult(openPicture, 1);
+            case R.id.diary_video_layout:
+                String[] items = {"选择图片", "选择视频"};
+                AlertDialog.Builder listDialog = new AlertDialog.Builder(MainActivity.this);
+                listDialog.setTitle("选择类型：");
+                listDialog.setItems(items, new DialogInterface.OnClickListener() {
+                    @Override
+                    public void onClick(DialogInterface dialog, int which) {
+                        if (which == 0) {
+                            Intent openPicture = new Intent(Intent.ACTION_PICK, null);
+                            openPicture.setDataAndType(MediaStore.Images.Media.EXTERNAL_CONTENT_URI, IMAGE_UNSPECIFIED);
+                            startActivityForResult(openPicture, 1);
+                        }else{
+                            Intent openVideo = new Intent(Intent.ACTION_PICK, null);
+                            openVideo.setDataAndType(MediaStore.Images.Media.EXTERNAL_CONTENT_URI, VIDEO_UNSPECIFIED);
+                            startActivityForResult(openVideo, 2);
+                        }
+                    }
+                });
+                listDialog.show();
             default:
                 break;
         }
@@ -290,7 +338,13 @@ public class MainActivity extends DiaryBaseActivity implements View.OnClickListe
         if (dateString == null || "".equals(dateString)) {
             dateString = sdf1.format(new Date());
         }
-        String filePath = FILE_PATH + dateString.split("-")[0] + "/" + dateString.split("-")[0] + "-" + dateString.split("-")[1];
+        String filePath = FILE_PATH;
+        String fileName = dateString + ".jpg";
+        if (itemid == R.id.diary_create_storage) { //文件存储
+            filePath = STORAGE_PATH;
+            fileName = new File(picturePath).getName();
+        }
+        filePath += dateString.split("-")[0] + "/" + dateString.split("-")[0] + "-" + dateString.split("-")[1];
         File file = new File(rootDir, filePath);
         file.setReadable(true);
         if (!file.exists()) {
@@ -300,7 +354,7 @@ public class MainActivity extends DiaryBaseActivity implements View.OnClickListe
         text = "    " + text.replaceAll("\t", "");
         Log.i(TAG, text);
 
-        file = new File(file, dateString + ".jpg");
+        file = new File(file, fileName);
         loadDialog = DialogUtils.createLoadingDialog(MainActivity.this, "请稍候...");
 
         DiaryCreateThread thread = new DiaryCreateThread(this, file, text, itemid, splitWidth, splitHeight);
@@ -358,6 +412,9 @@ public class MainActivity extends DiaryBaseActivity implements View.OnClickListe
                         String returnString = ImageSplitUtil.splitImage(file, picturePath, splitWidth, splitHeight);
                         ImageUtil.writeSplitMessage(returnString, file, text);
                         ImageUtil.writeMessage(file, text, 2);
+                    } else if (itemId == R.id.diary_create_storage) {
+                        ImageUtil.writePhotoMessage(new File(picturePath), file, text);
+                        ImageUtil.writeMessage(file, text, 1);
                     }
                 } catch (Exception e) {
                     e.printStackTrace();

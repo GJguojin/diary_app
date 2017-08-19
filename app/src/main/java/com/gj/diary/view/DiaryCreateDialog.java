@@ -51,6 +51,7 @@ public class DiaryCreateDialog {
                 switch (checkedId) {
                     case R.id.diary_create_normal:
                     case R.id.diary_create_hide:
+                    case R.id.diary_create_storage:
                         linearLayout.setVisibility(View.INVISIBLE);
                         break;
                     case R.id.diary_create_split:
