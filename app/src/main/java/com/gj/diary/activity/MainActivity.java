@@ -190,6 +190,8 @@ public class MainActivity extends DiaryBaseActivity implements View.OnClickListe
         diaryPicture.setImageBitmap(defaultDiaryPicture);
         diaryPicture.setOnClickListener(this);
         diaryVideoLayout.setOnClickListener(this);
+
+        verifyStoragePermissions(this);
     }
 
     @Override
