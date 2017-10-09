@@ -23,6 +23,7 @@ import android.net.Uri;
 import android.os.Environment;
 import android.os.Handler;
 import android.os.Message;
+import android.os.storage.StorageManager;
 import android.provider.MediaStore;
 import android.support.v4.app.ActivityCompat;
 import android.support.v7.app.ActionBar;
@@ -52,9 +53,12 @@ import com.gj.diary.view.DiaryChangePassDialog;
 import com.gj.diary.view.DiaryCreateDialog;
 
 import java.io.File;
+import java.lang.reflect.Method;
 import java.text.SimpleDateFormat;
+import java.util.ArrayList;
 import java.util.Calendar;
 import java.util.Date;
+import java.util.List;
 
 public class MainActivity extends DiaryBaseActivity implements View.OnClickListener {
 
@@ -143,6 +147,15 @@ public class MainActivity extends DiaryBaseActivity implements View.OnClickListe
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
 
+        verifyStoragePermissions(this);
+        final List<String> storagePaths = getStoragePath(this);
+        if(storagePaths.size() >1){
+            String rootParh = storagePaths.get(1);
+            if(rootDir != null && !rootDir.getAbsolutePath().equals(rootParh)){
+                rootDir = new File(rootParh);
+            }
+        }
+
         ActionBar actionBar = getSupportActionBar();
         actionBar.setIcon(R.mipmap.diary);
         actionBar.setDisplayShowHomeEnabled(true);
@@ -190,8 +203,6 @@ public class MainActivity extends DiaryBaseActivity implements View.OnClickListe
         diaryPicture.setImageBitmap(defaultDiaryPicture);
         diaryPicture.setOnClickListener(this);
         diaryVideoLayout.setOnClickListener(this);
-
-        verifyStoragePermissions(this);
     }
 
     @Override
@@ -483,4 +494,45 @@ public class MainActivity extends DiaryBaseActivity implements View.OnClickListe
             return bitmap;
         }
     }
+
+    /**
+     * 获取正常运行的存储设备路径
+     * @param activity
+     * @return
+     */
+    public static List<String> getStoragePath(Activity activity) {
+        List<String> storagePathList = new ArrayList<>();
+        try {
+            StorageManager sm = (StorageManager) activity.getSystemService(Activity.STORAGE_SERVICE);
+            Method getVolumePathsMethod = StorageManager.class.getMethod("getVolumePaths");
+            String[] paths = (String[]) getVolumePathsMethod.invoke(sm);
+            for(int i=0;i<paths.length;i++){
+                if(getStorageState(activity, paths[i]).equals(Environment.MEDIA_MOUNTED)){
+                    storagePathList.add(paths[i]);
+                }
+            }
+        } catch (Exception e) {
+            Log.e("Storage", "error");
+        }
+        return storagePathList;
+    }
+
+    /**
+     * 获取路径状态
+     * @param activity
+     * @param path
+     * @return
+     */
+    public static String getStorageState(Activity activity, String path) {
+        try {
+            StorageManager sm = (StorageManager) activity.getSystemService(Activity.STORAGE_SERVICE);
+            Method getVolumeStateMethod = StorageManager.class.getMethod("getVolumeState", new Class[] {String.class});
+            String state = (String) getVolumeStateMethod.invoke(sm, path);
+            return state;
+        } catch (Exception e) {
+            Log.e("Storage state", "error");
+        }
+        return "";
+    }
+
 }
