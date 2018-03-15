@@ -11,6 +11,7 @@ import android.view.LayoutInflater;
 import android.view.View;
 import android.widget.EditText;
 import android.widget.LinearLayout;
+import android.widget.RadioButton;
 import android.widget.RadioGroup;
 import android.widget.TextView;
 
@@ -42,6 +43,20 @@ public class DiaryCreateDialog {
         //动态加载布局生成View对象
         LayoutInflater layoutInflater = LayoutInflater.from(context);
         View diaryCreateView = layoutInflater.inflate(R.layout.diary_create_dialog, null);
+
+        boolean useStorageAble = false;
+        final String useStorage = PropertiesUtil.getProperties(context, "use_storage");
+        if(useStorage != null && !"".equals(useStorage)  ){
+            if("true".equals(useStorage)){
+                useStorageAble = true;
+            }
+        }else{
+            useStorageAble = Boolean.parseBoolean(PropertiesUtil.PROPERTIES.get("use_storage"));
+        }
+        if(!useStorageAble){
+            final RadioButton radioButton = (RadioButton)diaryCreateView.findViewById(R.id.diary_create_storage);
+            radioButton.setVisibility(View.INVISIBLE);
+        }
         //获取布局中的控件
         radioGroup =(RadioGroup) diaryCreateView.findViewById(R.id.diary_create_radioGroup);
         radioGroup.setOnCheckedChangeListener(new RadioGroup.OnCheckedChangeListener(){

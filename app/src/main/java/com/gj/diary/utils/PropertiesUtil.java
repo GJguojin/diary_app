@@ -23,6 +23,7 @@ public class PropertiesUtil {
     public static final String PASSWORD_PHOTO="passwordPhoto";
 
     public static final Map<String,String> PROPERTIES  = new HashMap<>();
+    public static final Map<String,String> PROPERTIES_NAME  = new HashMap<>();
 
     private static Properties props;
 
@@ -33,9 +34,22 @@ public class PropertiesUtil {
 
     static {
         PROPERTIES.put("photo_radito","1.7808");
+        PROPERTIES_NAME.put("photo_radito","图片宽高比");
+
         PROPERTIES.put("create_title","日记制作");
+        PROPERTIES_NAME.put("create_title","创建页标题");
+
         PROPERTIES.put("query_title","日记浏览");
+        PROPERTIES_NAME.put("query_title","浏览页标题");
+
         PROPERTIES.put("diary_text_title","2050年的自己：");
+        PROPERTIES_NAME.put("diary_text_title","正文标题");
+
+        PROPERTIES.put("diary_text_start","这张照片还记得吗？这一天是[date],");
+        PROPERTIES_NAME.put("diary_text_start","正文开始");
+
+        PROPERTIES.put("use_storage","true");
+        PROPERTIES_NAME.put("use_storage","使用存储");
     }
 
     /**

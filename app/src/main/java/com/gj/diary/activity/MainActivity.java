@@ -19,6 +19,7 @@ import android.graphics.PorterDuff;
 import android.graphics.PorterDuffXfermode;
 import android.graphics.Rect;
 import android.graphics.RectF;
+import android.graphics.drawable.Drawable;
 import android.net.Uri;
 import android.os.Environment;
 import android.os.Handler;
@@ -78,7 +79,7 @@ public class MainActivity extends DiaryBaseActivity implements View.OnClickListe
     public static String STORAGE_PATH = "/diary/日记/storage/";
     public static String DF_BITMAP_PATH = "/diary/defaultBitmap.jpg";
 
-    private static String diaryStartText = "\t\t\t\t这张照片还记得吗？这一天是[date],";
+    private String diaryStartText = "";
     private static SimpleDateFormat sdf = new SimpleDateFormat("yyyy年MM月dd日");
     private static SimpleDateFormat sdf1 = new SimpleDateFormat("yyyy-MM-dd");
     private static String dateString;
@@ -197,6 +198,13 @@ public class MainActivity extends DiaryBaseActivity implements View.OnClickListe
 
         //设置日记时间
         diaryTextStartText = (TextView) this.findViewById(R.id.diary_text_start);
+        diaryStartText = PropertiesUtil.getProperties(this, "diary_text_start");
+        if(diaryStartText != null && !"".equals(diaryStartText)){
+            diaryStartText = "\t\t\t\t"+diaryStartText;
+        }else{
+            diaryStartText = "\t\t\t\t"+ PropertiesUtil.PROPERTIES.get("diary_text_start");
+        }
+
         Date date = new Date();
         String format = sdf.format(date);
         dateString = sdf1.format(date);
@@ -345,24 +353,39 @@ public class MainActivity extends DiaryBaseActivity implements View.OnClickListe
                 break;
             case R.id.diary_picture:
             case R.id.diary_video_layout:
-                String[] items = {"选择图片", "选择视频"};
-                AlertDialog.Builder listDialog = new AlertDialog.Builder(MainActivity.this);
-                listDialog.setTitle("选择类型：");
-                listDialog.setItems(items, new DialogInterface.OnClickListener() {
-                    @Override
-                    public void onClick(DialogInterface dialog, int which) {
-                        if (which == 0) {
-                            Intent openPicture = new Intent(Intent.ACTION_PICK, null);
-                            openPicture.setDataAndType(MediaStore.Images.Media.EXTERNAL_CONTENT_URI, IMAGE_UNSPECIFIED);
-                            startActivityForResult(openPicture, 1);
-                        }else{
-                            Intent openVideo = new Intent(Intent.ACTION_PICK, null);
-                            openVideo.setDataAndType(MediaStore.Images.Media.EXTERNAL_CONTENT_URI, VIDEO_UNSPECIFIED);
-                            startActivityForResult(openVideo, 2);
-                        }
+                boolean useStorageAble = false;
+                final String useStorage = PropertiesUtil.getProperties(this, "use_storage");
+                if(useStorage != null && !"".equals(useStorage)  ){
+                    if("true".equals(useStorage)){
+                        useStorageAble = true;
                     }
-                });
-                listDialog.show();
+                }else{
+                    useStorageAble = Boolean.parseBoolean(PropertiesUtil.PROPERTIES.get("use_storage"));
+                }
+                if(useStorageAble){
+                    String[] items = {"选择图片", "选择视频"};
+                    AlertDialog.Builder listDialog = new AlertDialog.Builder(MainActivity.this);
+                    listDialog.setTitle("选择类型：");
+                    listDialog.setItems(items, new DialogInterface.OnClickListener() {
+                        @Override
+                        public void onClick(DialogInterface dialog, int which) {
+                            if (which == 0) {
+                                Intent openPicture = new Intent(Intent.ACTION_PICK, null);
+                                openPicture.setDataAndType(MediaStore.Images.Media.EXTERNAL_CONTENT_URI, IMAGE_UNSPECIFIED);
+                                startActivityForResult(openPicture, 1);
+                            }else{
+                                Intent openVideo = new Intent(Intent.ACTION_PICK, null);
+                                openVideo.setDataAndType(MediaStore.Images.Media.EXTERNAL_CONTENT_URI, VIDEO_UNSPECIFIED);
+                                startActivityForResult(openVideo, 2);
+                            }
+                        }
+                    });
+                    listDialog.show();
+                }else{
+                    Intent openPicture = new Intent(Intent.ACTION_PICK, null);
+                    openPicture.setDataAndType(MediaStore.Images.Media.EXTERNAL_CONTENT_URI, IMAGE_UNSPECIFIED);
+                    startActivityForResult(openPicture, 1);
+                }
             default:
                 break;
         }
