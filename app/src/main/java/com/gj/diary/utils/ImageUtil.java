@@ -110,7 +110,7 @@ public class ImageUtil {
 	}
 
 	public static void writeMessage(File file,String text,Integer type) throws Exception{
-		text = "2050年的自己：\n"+text;
+		text = PropertiesUtil.PROPERTIES.get("diary_text_start")+"\n"+text;
 		String key = MD5Util.getMd532( text );
 
 		BufferedWriter bufferedWriter = null;

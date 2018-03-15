@@ -98,7 +98,13 @@ public class DiaryQueryActivity extends DiaryBaseActivity  {
         actionBar.setDisplayHomeAsUpEnabled(true);
         //actionBar.setIcon(R.mipmap.diary);
         //actionBar.setDisplayShowHomeEnabled(true);
-        actionBar.setTitle("日记浏览");
+
+        final String queryTitle = PropertiesUtil.getProperties(this, "query_title");
+        if(queryTitle != null && !"".equals(queryTitle)){
+            actionBar.setTitle(queryTitle);
+        }else{
+            actionBar.setTitle(PropertiesUtil.PROPERTIES.get("query_title"));
+        }
         actionBar.show();
 
         TreeNode root = TreeNode.root();

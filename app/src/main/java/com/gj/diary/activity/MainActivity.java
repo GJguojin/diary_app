@@ -51,6 +51,8 @@ import com.gj.diary.utils.ImageUtil;
 import com.gj.diary.utils.PropertiesUtil;
 import com.gj.diary.view.DiaryChangePassDialog;
 import com.gj.diary.view.DiaryCreateDialog;
+import com.gj.diary.view.DiaryImageView;
+import com.gj.diary.view.DiaryPropertyDialog;
 
 import java.io.File;
 import java.lang.reflect.Method;
@@ -85,12 +87,13 @@ public class MainActivity extends DiaryBaseActivity implements View.OnClickListe
     private Button dirayCreateButton = null; //生成日志按钮
     private Button diaryQueryButton = null;
 
+    private TextView diaryTextTitle = null;
     private TextView diaryTextStartText = null;
 
     private EditText diaryTextContent;
 
     private String picturePath;
-    private ImageView diaryPicture;
+    private DiaryImageView diaryPicture;
     private VideoView diaryVideo;
     private LinearLayout diaryVideoLayout;
     private MediaController mediaco;
@@ -126,6 +129,9 @@ public class MainActivity extends DiaryBaseActivity implements View.OnClickListe
                 case 4:
                     Toast.makeText(MainActivity.this, "修改密码成功", Toast.LENGTH_SHORT).show();
                     break;
+                case 5:
+                    Toast.makeText(MainActivity.this, "属相配置成功", Toast.LENGTH_SHORT).show();
+                    break;
             }
         }
     };
@@ -159,7 +165,12 @@ public class MainActivity extends DiaryBaseActivity implements View.OnClickListe
         ActionBar actionBar = getSupportActionBar();
         actionBar.setIcon(R.mipmap.diary);
         actionBar.setDisplayShowHomeEnabled(true);
-        actionBar.setTitle("日记制作");
+        final String createTitle = PropertiesUtil.getProperties(this, "create_title");
+        if(createTitle != null && !"".equals(createTitle)){
+            actionBar.setTitle(createTitle);
+        }else{
+            actionBar.setTitle(PropertiesUtil.PROPERTIES.get("create_title"));
+        }
         actionBar.show();
 
         String filePath = PropertiesUtil.getProperties(this, "filePath");
@@ -174,6 +185,14 @@ public class MainActivity extends DiaryBaseActivity implements View.OnClickListe
             DF_BITMAP_PATH = defaultBitmapPath;
         } else {
             PropertiesUtil.saveProperties(this, "defaultBitmapPath", DF_BITMAP_PATH);
+        }
+
+        diaryTextTitle =  (TextView) this.findViewById(R.id.diary_text_title);
+        final String textTitle = PropertiesUtil.getProperties(this, "diary_text_title");
+        if(textTitle != null && !"".equals(textTitle)){
+            diaryTextTitle.setText(textTitle);
+        }else{
+            diaryTextTitle.setText(PropertiesUtil.PROPERTIES.get("diary_text_title"));
         }
 
         //设置日记时间
@@ -194,13 +213,21 @@ public class MainActivity extends DiaryBaseActivity implements View.OnClickListe
         diaryQueryButton = (Button) this.findViewById(R.id.diary_query);
         diaryQueryButton.setOnClickListener(this);
 
-        diaryPicture = (ImageView) findViewById(R.id.diary_picture);
+        diaryPicture = (DiaryImageView) findViewById(R.id.diary_picture);
         diaryVideo  = (VideoView) findViewById(R.id.diary_video);
         diaryVideoLayout = (LinearLayout)findViewById(R.id.diary_video_layout);
         diaryVideoLayout.setVisibility(View.GONE);
         Bitmap defaultDiaryPicture = BitmapFactory.decodeResource(getResources(), R.drawable.background);
         defaultDiaryPicture = getRoundedCornerBitmap(defaultDiaryPicture, 70);
         diaryPicture.setImageBitmap(defaultDiaryPicture);
+        final String photoRadito = PropertiesUtil.getProperties(this, "photo_radito");
+        if(photoRadito != null && !"".equals(photoRadito)){
+            try{
+                final Float aFloat = Float.valueOf(photoRadito);
+                diaryPicture.setMRadito(aFloat);
+            }catch (Exception e){
+            }
+        }
         diaryPicture.setOnClickListener(this);
         diaryVideoLayout.setOnClickListener(this);
     }
@@ -222,12 +249,14 @@ public class MainActivity extends DiaryBaseActivity implements View.OnClickListe
             case R.id.chang_photo_pass_menu:
                 new DiaryChangePassDialog(this, "2");
                 break;
+            case R.id.chang_photo_radito_menu:
+                new DiaryPropertyDialog(this);
+                break;
             default:
                 break;
         }
         return super.onOptionsItemSelected(item);
     }
-
 
     @Override
     protected void onActivityResult(int requestCode, int resultCode, Intent data) {

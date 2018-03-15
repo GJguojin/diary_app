@@ -8,7 +8,11 @@ import java.io.FileInputStream;
 import java.io.FileNotFoundException;
 import java.io.IOException;
 import java.io.OutputStream;
+import java.util.HashMap;
+import java.util.HashSet;
+import java.util.Map;
 import java.util.Properties;
+import java.util.Set;
 
 /**
  * Created by Administrator on 2017/6/24.
@@ -18,12 +22,21 @@ public class PropertiesUtil {
     public static final String PASSWORD_DIARY="password";
     public static final String PASSWORD_PHOTO="passwordPhoto";
 
+    public static final Map<String,String> PROPERTIES  = new HashMap<>();
+
     private static Properties props;
 
     public static String diaryPassword;
 
 
     private final static String CONFIG_NAME="diaryConfig.properties";
+
+    static {
+        PROPERTIES.put("photo_radito","1.7808");
+        PROPERTIES.put("create_title","日记制作");
+        PROPERTIES.put("query_title","日记浏览");
+        PROPERTIES.put("diary_text_title","2050年的自己：");
+    }
 
     /**
      * 得到属性值

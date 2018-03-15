@@ -9,4 +9,8 @@
         android:id="@+id/chang_photo_pass_menu"
         android:title="修改解析密码" />
 
+    <item
+        android:id="@+id/chang_photo_radito_menu"
+        android:title="修改属相值" />
+
 </menu>
