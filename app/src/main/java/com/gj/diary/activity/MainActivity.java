@@ -3,6 +3,7 @@ package com.gj.diary.activity;
 import android.Manifest;
 import android.app.Activity;
 import android.app.AlertDialog;
+import android.app.Application;
 import android.app.Dialog;
 import android.content.ContentResolver;
 import android.content.Context;
@@ -38,6 +39,7 @@ import android.widget.Button;
 import android.widget.EditText;
 import android.widget.ImageView;
 import android.widget.LinearLayout;
+import android.widget.ListAdapter;
 import android.widget.MediaController;
 import android.widget.TextView;
 import android.widget.Toast;
@@ -151,11 +153,11 @@ public class MainActivity extends DiaryBaseActivity implements View.OnClickListe
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
-        super.onCreate(savedInstanceState);
         final String appTheme = PropertiesUtil.getProperties(this, "appTheme");
         if(appTheme != null  && !"".equals(appTheme)){
             this.setTheme(Integer.parseInt(appTheme));
         }
+        super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
 
         verifyStoragePermissions(this);
@@ -263,6 +265,31 @@ public class MainActivity extends DiaryBaseActivity implements View.OnClickListe
                 break;
             case R.id.chang_photo_radito_menu:
                 new DiaryPropertyDialog(this);
+                break;
+            case R.id.chang_theme_menu:
+                final Application application = MainActivity.this.getApplication();
+
+                final String[] items ={"庄重蓝","少女粉","深沉黑"};
+                AlertDialog.Builder builder = new AlertDialog.Builder(this);
+                // 设置参数
+                builder.setTitle("切换主题：")
+                        .setItems(items, new DialogInterface.OnClickListener() {
+                            @Override
+                            public void onClick(DialogInterface dialog, int which) {
+                                int appTheme = R.style.BlueTheme;
+                                if(which == 0){
+                                    appTheme = R.style.BlueTheme;
+                                }else if(which == 1){
+                                    appTheme = R.style.PinkTheme;
+                                }else{
+                                    appTheme = R.style.DarkTheme;
+                                }
+                                PropertiesUtil.saveProperties(application,"appTheme",""+appTheme);
+                                dialog.dismiss();
+                                recreate();
+                            }
+                        });
+                builder.create().show();
                 break;
             default:
                 break;

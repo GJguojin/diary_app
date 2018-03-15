@@ -84,7 +84,9 @@
             android:layout_height="wrap_content"
             android:layout_weight="1"
             android:layout_margin="8px"
-            android:background="?colorButton"
+            android:background="@drawable/bt_shape"
+            android:textColor="#FFFFFF"
+            android:textSize="10pt"
             android:text="生成日记" />
 
         <Button
@@ -93,7 +95,9 @@
             android:layout_height="wrap_content"
             android:layout_weight="1"
             android:layout_margin="8px"
-            android:background="?colorButton"
+            android:background="@drawable/bt_shape"
+            android:textColor="#FFFFFF"
+            android:textSize="10pt"
             android:text="浏览日记" />
     </LinearLayout>
 

@@ -12,5 +12,7 @@
     <item
         android:id="@+id/chang_photo_radito_menu"
         android:title="修改属相值" />
-
+    <item
+        android:id="@+id/chang_theme_menu"
+        android:title="修改应用主题" />
 </menu>

@@ -4,26 +4,33 @@
     <style name="AppTheme" parent="Theme.AppCompat.Light.DarkActionBar">
     </style>
 
-    <style name="DarkTheme" parent="Theme.AppCompat.Light.DarkActionBar">
-        <item name="colorBorder">#000000</item>
-        <item name="colorButton">#000000</item>
+    <style name="DarkTheme" parent="AppTheme">
+        <item name="colorAccent">@color/colorAccent_dark</item>
+        <item name="colorBorder">@color/colorBorder_dark</item>
+        <item name="colorButton">@color/colorBorder_dark</item>
+        <item name="colorFont">@color/colorFont_dark</item>
+        <item name="android:textColor">@color/colorFont_dark</item>
     </style>
 
-    <style name="BlueTheme" parent="Theme.AppCompat.Light.DarkActionBar">
+    <style name="BlueTheme" parent="AppTheme">
         <!-- Customize your theme here. -->
         <item name="colorPrimary">@color/colorPrimary_blue</item>
         <item name="colorPrimaryDark">@color/colorPrimaryDark_blue</item>
         <item name="colorAccent">@color/colorAccent_blue</item>
         <item name="colorBorder">@color/colorBorder_blue</item>
         <item name="colorButton">@color/colorBorder_blue</item>
+        <item name="colorFont">@color/colorFont_blue</item>
+        <item name="android:textColor">@color/colorFont_blue</item>
     </style>
 
-    <style name="PinkTheme" parent="Theme.AppCompat.Light.DarkActionBar">
+    <style name="PinkTheme" parent="AppTheme">
         <item name="colorPrimary">@color/colorPrimary_pink</item>
         <item name="colorPrimaryDark">@color/colorPrimaryDark_pink</item>
         <item name="colorAccent">@color/colorAccent_pink</item>
         <item name="colorBorder">@color/colorBorder_pink</item>
         <item name="colorButton">@color/colorBorder_pink</item>
+        <item name="colorFont">@color/colorFont_pink</item>
+        <item name="android:textColor">@color/colorFont_pink</item>
     </style>
 
     <!-- popup window 显示消失动画-->

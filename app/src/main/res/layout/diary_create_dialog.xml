@@ -18,6 +18,7 @@
             android:id="@+id/diary_create_normal"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
+            android:textColor="?colorFont"
             android:text="普通生成"
             android:textSize="18dp"
             android:checked="true"/>
@@ -26,6 +27,7 @@
             android:id="@+id/diary_create_hide"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
+            android:textColor="?colorFont"
             android:textSize="18dp"
             android:text="隐藏生成" />
 
@@ -33,6 +35,7 @@
             android:id="@+id/diary_create_split"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
+            android:textColor="?colorFont"
             android:textSize="18dp"
             android:text="切割生成" />
 
@@ -40,6 +43,7 @@
             android:id="@+id/diary_create_storage"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
+            android:textColor="?colorFont"
             android:textSize="18dp"
             android:text="加密储存" />
     </RadioGroup>

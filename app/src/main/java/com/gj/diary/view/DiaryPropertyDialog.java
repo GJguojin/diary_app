@@ -3,6 +3,7 @@ package com.gj.diary.view;
 import android.content.Context;
 import android.content.DialogInterface;
 import android.support.v7.app.AlertDialog;
+import android.support.v7.app.AppCompatActivity;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.widget.EditText;
@@ -116,6 +117,7 @@ public class DiaryPropertyDialog {
         diaryPropertyDialog.getButton(AlertDialog.BUTTON_NEGATIVE).setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
+                ((AppCompatActivity)mContext).recreate();
                 diaryPropertyDialog.dismiss();
             }
         });

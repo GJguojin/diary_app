@@ -91,6 +91,10 @@ public class DiaryQueryActivity extends DiaryBaseActivity  {
 
     @Override
     protected void onCreate(@Nullable Bundle savedInstanceState) {
+        final String appTheme = PropertiesUtil.getProperties(this, "appTheme");
+        if(appTheme != null  && !"".equals(appTheme)){
+            this.setTheme(Integer.parseInt(appTheme));
+        }
         setContentView(R.layout.activity_diary_query);
         super.onCreate(savedInstanceState);
         mContext =MyApp.getAppContext();

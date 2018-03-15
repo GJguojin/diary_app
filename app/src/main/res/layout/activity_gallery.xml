@@ -35,7 +35,6 @@
             android:id="@+id/index_image_zoom"
             android:layout_weight="1"
             android:gravity="center_vertical"
-            android:textColor="@android:color/white"
             android:layout_width="match_parent"
             android:layout_height="match_parent"
             android:layout_marginLeft="20dp"
@@ -44,7 +43,6 @@
         <TextView
             android:id="@+id/index_image_text"
             android:gravity="center_vertical"
-            android:textColor="@android:color/white"
             android:layout_width="wrap_content"
             android:layout_height="match_parent"
             android:text="2017-07-01"

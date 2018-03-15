@@ -10,5 +10,6 @@
     <attr name="colorAccent" format="reference|color" />-->
     <attr name="colorBorder" format="reference|color" />
     <attr name="colorButton" format="reference|color" />
+    <attr name="colorFont" format="reference|color" />
 
 </resources>

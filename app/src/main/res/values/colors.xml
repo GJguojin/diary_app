@@ -4,13 +4,21 @@
     <color name="colorPrimaryDark_blue">#303F9F</color>
     <color name="colorAccent_blue">#355F9F</color>
     <color name="colorBorder_blue">#355F9F</color>
-    <color name="colorButton_blue">#355F9F</color>
+    <color name="colorButton_blue">#4A4AFF</color>
+    <color name="colorFont_blue">#355F9F</color>
 
 
     <color name="colorPrimary_pink">#FF69B4</color>
     <color name="colorPrimaryDark_pink">#FF1493</color>
-    <color name="colorAccent_pink">#FF69B4</color>
-    <color name="colorBorder_pink">#FF69B4</color>
-    <color name="colorButton_pink">#FF69B4</color>
+    <color name="colorAccent_pink">#FF60AF</color>
+    <color name="colorBorder_pink">#FF60AF</color>
+    <color name="colorButton_pink">#FF359A</color>
+    <color name="colorFont_pink">#FF60AF</color>
+
+    <color name="colorAccent_dark">#1C1C1C</color>
+    <color name="colorBorder_dark">#1C1C1C</color>
+    <color name="colorButton_dark">#1F1F1F</color>
+    <color name="colorFont_dark">#1C1C1C</color>
+
 
 </resources>
