@@ -84,7 +84,7 @@
             android:layout_height="wrap_content"
             android:layout_weight="1"
             android:layout_margin="8px"
-            android:background="@color/colorButton"
+            android:background="?colorButton"
             android:text="生成日记" />
 
         <Button
@@ -93,7 +93,7 @@
             android:layout_height="wrap_content"
             android:layout_weight="1"
             android:layout_margin="8px"
-            android:background="@color/colorButton"
+            android:background="?colorButton"
             android:text="浏览日记" />
     </LinearLayout>
 

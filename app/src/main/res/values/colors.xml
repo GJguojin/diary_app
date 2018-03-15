@@ -1,16 +1,16 @@
 <?xml version="1.0" encoding="utf-8"?>
 <resources>
-    <color name="colorPrimary">#3F51B5</color>
-    <color name="colorPrimaryDark">#303F9F</color>
-    <color name="colorAccent">#355F9F</color>
-    <color name="colorBorder">#355F9F</color>
-    <color name="colorButton">#355F9F</color>
+    <color name="colorPrimary_blue">#3F51B5</color>
+    <color name="colorPrimaryDark_blue">#303F9F</color>
+    <color name="colorAccent_blue">#355F9F</color>
+    <color name="colorBorder_blue">#355F9F</color>
+    <color name="colorButton_blue">#355F9F</color>
 
 
-<!--    <color name="colorPrimary">#FF69B4</color>
-    <color name="colorPrimaryDark">#FF1493</color>
-    <color name="colorAccent">#FF69B4</color>
-    <color name="colorBorder">#FF69B4</color>
-    <color name="colorButton">#FF69B4</color>-->
+    <color name="colorPrimary_pink">#FF69B4</color>
+    <color name="colorPrimaryDark_pink">#FF1493</color>
+    <color name="colorAccent_pink">#FF69B4</color>
+    <color name="colorBorder_pink">#FF69B4</color>
+    <color name="colorButton_pink">#FF69B4</color>
 
 </resources>

@@ -4,4 +4,11 @@
         <!-- 比例=宽/高 -->
         <attr name="ratio" format="float" />
     </declare-styleable>
+
+   <!-- <attr name="colorPrimary" format="reference|color" />
+    <attr name="colorPrimaryDark" format="reference|color"/>
+    <attr name="colorAccent" format="reference|color" />-->
+    <attr name="colorBorder" format="reference|color" />
+    <attr name="colorButton" format="reference|color" />
+
 </resources>

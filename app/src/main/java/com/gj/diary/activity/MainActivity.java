@@ -152,6 +152,10 @@ public class MainActivity extends DiaryBaseActivity implements View.OnClickListe
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
+        final String appTheme = PropertiesUtil.getProperties(this, "appTheme");
+        if(appTheme != null  && !"".equals(appTheme)){
+            this.setTheme(Integer.parseInt(appTheme));
+        }
         setContentView(R.layout.activity_main);
 
         verifyStoragePermissions(this);
