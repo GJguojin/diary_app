@@ -32,6 +32,7 @@ public class ImageUtil {
 	public final static String PHOTO_LINE= "***********************************************************************";
 
 	public static final String salt = "diary";
+//	public static final String salt = "lcc1107";
 
 	public static final float W = 2080;//缩放后宽
 	public static final float H = 1168;//缩放后高

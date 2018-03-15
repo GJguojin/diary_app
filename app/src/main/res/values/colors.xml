@@ -3,34 +3,14 @@
     <color name="colorPrimary">#3F51B5</color>
     <color name="colorPrimaryDark">#303F9F</color>
     <color name="colorAccent">#355F9F</color>
+    <color name="colorBorder">#355F9F</color>
+    <color name="colorButton">#355F9F</color>
 
-    <color name="colorTranslucency">#55ffffff</color>
 
-    <color name="color_primary">#1d64ab</color>
-    <color name="color_secondly">#47acec</color>
-    <color name="color_gray">#c9c9c9</color>
-    <color name="color_bg">#e6eaf0</color>
-    <!-- 提示色 -->
-    <color name="color_tip">#ff9600</color>
-    <!-- 错误色 -->
-    <color name="color_error">#ff6000</color>
-    <color name="sign_board_title_bg">#3e4e6a</color>
-    <!-- 字体颜色 主题色 -->
-    <color name="text_primary">#495873</color>
-    <!-- 字体颜色 主题色 浅色-->
-    <color name="text_primary_light">@color/color_primary</color>
-    <!-- 字体颜色 黑 -->
-    <color name="text_black">#323232</color>
-    <!-- 字体颜色 灰 -->
-    <color name="text_gray">#545454</color>
-    <!-- 字体颜色 橙 -->
-    <color name="text_orange">#ffaf30</color>
-    <!-- 字体颜色 绿 -->
-    <color name="text_green">#4ad8b6</color>
-    <!-- 字体颜色 灰 浅色-->
-    <color name="text_gray_light">#999999</color>
-    <!-- 字体颜色 灰 按钮不可点击-->
-    <color name="text_gray_disable">#8bb2e1</color>
-    <!-- 边框和分割线颜色-->
-    <color name="divider">#eaeaeb</color>
+<!--    <color name="colorPrimary">#FF69B4</color>
+    <color name="colorPrimaryDark">#FF1493</color>
+    <color name="colorAccent">#FF69B4</color>
+    <color name="colorBorder">#FF69B4</color>
+    <color name="colorButton">#FF69B4</color>-->
+
 </resources>
