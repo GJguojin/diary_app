@@ -111,7 +111,7 @@ public class ImageUtil {
 	}
 
 	public static void writeMessage(File file,String text,Integer type) throws Exception{
-		text = PropertiesUtil.PROPERTIES.get("diary_text_start")+"\n"+text;
+		text = PropertiesUtil.PROPERTIES.get("diary_text_title")+"\n"+text;
 		String key = MD5Util.getMd532( text );
 
 		BufferedWriter bufferedWriter = null;
