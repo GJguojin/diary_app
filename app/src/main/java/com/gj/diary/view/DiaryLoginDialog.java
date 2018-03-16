@@ -44,7 +44,7 @@ public class DiaryLoginDialog{
                 .setView(longinDialogView)       //加载自定义的对话框式样
                 .setPositiveButton("确定", null)
                 .setNegativeButton("取消", null);
-        if("1".equals(type)){
+        if("1".equals(type) || "0".equals(type)){
             build.setTitle("登录密码");
         }else{
             build.setTitle("解析密码");
@@ -63,11 +63,14 @@ public class DiaryLoginDialog{
                         result.setText("密码错误！");
                     }else{
                         diaryLoginDialog.dismiss();
-                        DiaryQueryActivity diaryQueryActivity = (DiaryQueryActivity) context;
-                        if("1".equals(type)){
+                        if("0".equals(type)){
+                            new AlertDialog.Builder(mContext).setTitle("产品秘钥：").setMessage(PropertiesUtil.getProperties(mContext, "salt_value")).show();
+                        }else if("1".equals(type)){
+                            DiaryQueryActivity diaryQueryActivity = (DiaryQueryActivity) context;
                             PropertiesUtil.diaryPassword =passwordString;
                             diaryQueryActivity.handler.sendEmptyMessage(DiaryQueryActivity.PASSWORD_CHECKED_OK);
                         } else{
+                            DiaryQueryActivity diaryQueryActivity = (DiaryQueryActivity) context;
                             diaryQueryActivity.handler.sendEmptyMessage(DiaryQueryActivity.PASSWORD_PHOTO_OK);
                         }
                     }

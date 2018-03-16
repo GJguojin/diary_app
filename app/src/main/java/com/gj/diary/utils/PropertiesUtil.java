@@ -62,6 +62,9 @@ public class PropertiesUtil {
 
         PROPERTIES.put("appTheme","");
         PROPERTIES_NAME.put("appTheme","主题值");
+
+        PROPERTIES.put("query_salt","false");
+        PROPERTIES_NAME.put("query_salt","查看产品秘钥");
     }
 
     /**
@@ -130,10 +133,10 @@ public class PropertiesUtil {
 
 
             out = context.openFileOutput(CONFIG_NAME, Context.MODE_PRIVATE);
-            if (props.getProperty(PASSWORD_DIARY) == null || "".equals(props.getProperty(PASSWORD_DIARY) )) {
+            if ((props.getProperty(PASSWORD_DIARY) == null || "".equals(props.getProperty(PASSWORD_DIARY) )) && ImageUtil.salt != null) {
                 props.setProperty(PASSWORD_DIARY, MD5Util.getMd532("00000000" + ImageUtil.salt));
             }
-            if (props.getProperty(PASSWORD_PHOTO)==null || "".equals(props.getProperty(PASSWORD_PHOTO))) {
+            if ((props.getProperty(PASSWORD_PHOTO)==null || "".equals(props.getProperty(PASSWORD_PHOTO))) &&  ImageUtil.salt != null) {
                 props.setProperty(PASSWORD_PHOTO, MD5Util.getMd532("00000000" + ImageUtil.salt));
             }
             if (PASSWORD_DIARY.equals(keyName)) {
@@ -166,7 +169,7 @@ public class PropertiesUtil {
     public static boolean checkPassword(Context context,String password,String model){
         if(password != "" && password != null){
             String oldPassword = "";
-            if("1".equals( model )){
+            if("1".equals( model ) || "0".equals(model)){
                 oldPassword = getProperties( context, PASSWORD_DIARY);
             }else{
                 oldPassword = getProperties(context, PASSWORD_PHOTO);
@@ -186,4 +189,5 @@ public class PropertiesUtil {
     public static String getMd5String(String password){
         return MD5Util.getMd532( password+ImageUtil.salt );
     }
+
 }

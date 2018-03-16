@@ -15,4 +15,9 @@
     <item
         android:id="@+id/chang_theme_menu"
         android:title="修改应用主题" />
+
+    <item
+        android:id="@+id/look_salt_value"
+        android:visible="false"
+        android:title="查看产品密钥" />
 </menu>

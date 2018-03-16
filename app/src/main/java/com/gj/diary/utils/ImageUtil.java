@@ -1,9 +1,14 @@
 package com.gj.diary.utils;
 
+import android.app.AlertDialog;
+import android.content.Context;
+import android.content.DialogInterface;
 import android.graphics.Bitmap;
 import android.graphics.BitmapFactory;
 import android.graphics.Matrix;
 import android.util.Log;
+import android.widget.EditText;
+import android.widget.Toast;
 
 import com.gj.diary.activity.MainActivity;
 
@@ -31,8 +36,9 @@ public class ImageUtil {
 	
 	public final static String PHOTO_LINE= "***********************************************************************";
 
-	public static final String salt = "diary";
+//	public static final String salt = "diary";
 //	public static final String salt = "lcc1107";
+	public static String salt = null;
 
 	public static final float W = 2080;//缩放后宽
 	public static final float H = 1168;//缩放后高
@@ -273,6 +279,4 @@ public class ImageUtil {
 		out.close();
 		return file;
 	}
-
-	
 }

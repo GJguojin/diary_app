@@ -31,7 +31,9 @@ import android.support.v4.app.ActivityCompat;
 import android.support.v7.app.ActionBar;
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
+import android.text.Editable;
 import android.util.Log;
+import android.view.Gravity;
 import android.view.Menu;
 import android.view.MenuItem;
 import android.view.View;
@@ -55,6 +57,7 @@ import com.gj.diary.utils.PropertiesUtil;
 import com.gj.diary.view.DiaryChangePassDialog;
 import com.gj.diary.view.DiaryCreateDialog;
 import com.gj.diary.view.DiaryImageView;
+import com.gj.diary.view.DiaryLoginDialog;
 import com.gj.diary.view.DiaryPropertyDialog;
 import com.gj.diary.view.DiaryThemeDialog;
 
@@ -155,17 +158,21 @@ public class MainActivity extends DiaryBaseActivity implements View.OnClickListe
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         final String appTheme = PropertiesUtil.getProperties(this, "appTheme");
-        if(appTheme != null  && !"".equals(appTheme)){
+        if (appTheme != null && !"".equals(appTheme)) {
             this.setTheme(Integer.parseInt(appTheme));
         }
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
 
         verifyStoragePermissions(this);
+
+        //校验密码设置
+        checkSalt();
+
         final List<String> storagePaths = getStoragePath(this);
-        if(storagePaths.size() >1){
+        if (storagePaths.size() > 1) {
             String rootParh = storagePaths.get(1);
-            if(rootDir != null && !rootDir.getAbsolutePath().equals(rootParh)){
+            if (rootDir != null && !rootDir.getAbsolutePath().equals(rootParh)) {
                 rootDir = new File(rootParh);
             }
         }
@@ -174,13 +181,12 @@ public class MainActivity extends DiaryBaseActivity implements View.OnClickListe
         actionBar.setIcon(R.mipmap.diary);
         actionBar.setDisplayShowHomeEnabled(true);
         final String createTitle = PropertiesUtil.getProperties(this, "create_title");
-        if(createTitle != null && !"".equals(createTitle)){
+        if (createTitle != null && !"".equals(createTitle)) {
             actionBar.setTitle(createTitle);
-        }else{
+        } else {
             actionBar.setTitle(PropertiesUtil.PROPERTIES.get("create_title"));
         }
         actionBar.show();
-
 
         //图片路径
         final String filePath = PropertiesUtil.getProperties(this, "file_path");
@@ -208,22 +214,22 @@ public class MainActivity extends DiaryBaseActivity implements View.OnClickListe
             DF_BITMAP_PATH = PropertiesUtil.PROPERTIES.get("default_background");
             PropertiesUtil.saveProperties(this, "default_background", DF_BITMAP_PATH);
         }
-
-        diaryTextTitle =  (TextView) this.findViewById(R.id.diary_text_title);
+        
+        diaryTextTitle = (TextView) this.findViewById(R.id.diary_text_title);
         final String textTitle = PropertiesUtil.getProperties(this, "diary_text_title");
-        if(textTitle != null && !"".equals(textTitle)){
+        if (textTitle != null && !"".equals(textTitle)) {
             diaryTextTitle.setText(textTitle);
-        }else{
+        } else {
             diaryTextTitle.setText(PropertiesUtil.PROPERTIES.get("diary_text_title"));
         }
 
         //设置日记时间
         diaryTextStartText = (TextView) this.findViewById(R.id.diary_text_start);
         diaryStartText = PropertiesUtil.getProperties(this, "diary_text_start");
-        if(diaryStartText != null && !"".equals(diaryStartText)){
-            diaryStartText = "\t\t\t\t"+diaryStartText;
-        }else{
-            diaryStartText = "\t\t\t\t"+ PropertiesUtil.PROPERTIES.get("diary_text_start");
+        if (diaryStartText != null && !"".equals(diaryStartText)) {
+            diaryStartText = "\t\t\t\t" + diaryStartText;
+        } else {
+            diaryStartText = "\t\t\t\t" + PropertiesUtil.PROPERTIES.get("diary_text_start");
         }
 
         Date date = new Date();
@@ -243,8 +249,8 @@ public class MainActivity extends DiaryBaseActivity implements View.OnClickListe
         diaryQueryButton.setOnClickListener(this);
 
         diaryPicture = (DiaryImageView) findViewById(R.id.diary_picture);
-        diaryVideo  = (VideoView) findViewById(R.id.diary_video);
-        diaryVideoLayout = (LinearLayout)findViewById(R.id.diary_video_layout);
+        diaryVideo = (VideoView) findViewById(R.id.diary_video);
+        diaryVideoLayout = (LinearLayout) findViewById(R.id.diary_video_layout);
         diaryVideoLayout.setVisibility(View.GONE);
 
         Bitmap defaultDiaryPicture = null;
@@ -257,21 +263,62 @@ public class MainActivity extends DiaryBaseActivity implements View.OnClickListe
         defaultDiaryPicture = getRoundedCornerBitmap(defaultDiaryPicture, 70);
         diaryPicture.setImageBitmap(defaultDiaryPicture);
         final String photoRadito = PropertiesUtil.getProperties(this, "photo_radito");
-        if(photoRadito != null && !"".equals(photoRadito)){
-            try{
+        if (photoRadito != null && !"".equals(photoRadito)) {
+            try {
                 final Float aFloat = Float.valueOf(photoRadito);
                 diaryPicture.setMRadito(aFloat);
-            }catch (Exception e){
+            } catch (Exception e) {
             }
         }
         diaryPicture.setOnClickListener(this);
         diaryVideoLayout.setOnClickListener(this);
+
+    }
+
+    private void  checkSalt(){
+        String saltValue = PropertiesUtil.getProperties(this, "salt_value");
+        ImageUtil.salt = saltValue;
+        if(saltValue == null || "".equals(saltValue)){
+            final EditText et = new EditText(this);
+            et.setHint("4到8位字符，仅设置一次，请记牢..");
+            et.setGravity(Gravity.CENTER);
+            final AlertDialog saltDialog = new AlertDialog.Builder(this).setTitle("请输入产品秘钥")
+                    .setCancelable(false)
+                    .setIcon(android.R.drawable.ic_dialog_info)
+                    .setView(et)
+                    .setPositiveButton("确定", null)
+                    .show();
+            saltDialog.getButton(AlertDialog.BUTTON_POSITIVE).setOnClickListener(new View.OnClickListener() {
+                @Override
+                public void onClick(View v) {
+                    final String salt = et.getText().toString();
+                    if(salt != null && !"".equals(salt) && salt.length() >= 4 && salt.length() <= 8){
+                        ImageUtil.salt = salt;
+                        PropertiesUtil.saveProperties(MainActivity.this,"salt_value",salt);
+                        saltDialog.dismiss();
+                        Toast.makeText(MainActivity.this, "产品秘钥设置成功！", Toast.LENGTH_LONG).show();;
+                    }else{
+                        Toast.makeText(MainActivity.this, "产品秘钥不能为空,且长度在4到8位！", Toast.LENGTH_LONG).show();
+                    }
+                }
+            });
+        }
     }
 
     @Override
     public boolean onCreateOptionsMenu(Menu menu) {
-        // Inflate the menu; this adds items to the action bar if it is present.
         getMenuInflater().inflate(R.menu.main_menu, menu);
+
+        final MenuItem item = menu.findItem(R.id.look_salt_value);
+        //产品秘钥查看
+        String querySslt = PropertiesUtil.getProperties(this, "query_salt");
+        if (querySslt != null && !"".equals(querySslt)) {
+            if("true".equals(querySslt)){
+                item.setVisible(true);
+            }
+        }else{
+            PropertiesUtil.saveProperties(this, "query_salt", PropertiesUtil.PROPERTIES.get("query_salt"));
+        }
         return true;
     }
 
@@ -291,29 +338,10 @@ public class MainActivity extends DiaryBaseActivity implements View.OnClickListe
             case R.id.chang_theme_menu:
                 new DiaryThemeDialog(this);
                 break;
-               /* final Application application = MainActivity.this.getApplication();
-                final String[] items ={"庄重蓝","少女粉","深沉黑"};
-                AlertDialog.Builder builder = new AlertDialog.Builder(this);
-                // 设置参数
-                builder.setTitle("切换主题：")
-                        .setItems(items, new DialogInterface.OnClickListener() {
-                            @Override
-                            public void onClick(DialogInterface dialog, int which) {
-                                int appTheme = R.style.BlueTheme;
-                                if(which == 0){
-                                    appTheme = R.style.BlueTheme;
-                                }else if(which == 1){
-                                    appTheme = R.style.PinkTheme;
-                                }else{
-                                    appTheme = R.style.DarkTheme;
-                                }
-                                PropertiesUtil.saveProperties(application,"appTheme",""+appTheme);
-                                dialog.dismiss();
-                                recreate();
-                            }
-                        });
-                builder.create().show();
-                break;*/
+            case R.id.look_salt_value:
+                DiaryLoginDialog diaryLoginDialog = new DiaryLoginDialog(this,"0");
+                diaryLoginDialog.show();
+                break;
             default:
                 break;
         }
@@ -347,11 +375,11 @@ public class MainActivity extends DiaryBaseActivity implements View.OnClickListe
             case 2:
                 diaryPicture.setVisibility(View.GONE);
                 diaryVideoLayout.setVisibility(View.VISIBLE);
-                if(mediaco == null){
-                    mediaco=new MediaController(this);
+                if (mediaco == null) {
+                    mediaco = new MediaController(this);
                 }
-                File file=new File(picturePath);
-                if(file.exists()){
+                File file = new File(picturePath);
+                if (file.exists()) {
                     //VideoView与MediaController进行关联
                     diaryVideo.setVideoPath(file.getAbsolutePath());
                     diaryVideo.setMediaController(mediaco);
@@ -409,14 +437,14 @@ public class MainActivity extends DiaryBaseActivity implements View.OnClickListe
             case R.id.diary_video_layout:
                 boolean useStorageAble = false;
                 final String useStorage = PropertiesUtil.getProperties(this, "use_storage");
-                if(useStorage != null && !"".equals(useStorage)  ){
-                    if("true".equals(useStorage)){
+                if (useStorage != null && !"".equals(useStorage)) {
+                    if ("true".equals(useStorage)) {
                         useStorageAble = true;
                     }
-                }else{
+                } else {
                     useStorageAble = Boolean.parseBoolean(PropertiesUtil.PROPERTIES.get("use_storage"));
                 }
-                if(useStorageAble){
+                if (useStorageAble) {
                     String[] items = {"选择图片", "选择视频"};
                     AlertDialog.Builder listDialog = new AlertDialog.Builder(MainActivity.this);
                     listDialog.setTitle("选择类型：");
@@ -427,7 +455,7 @@ public class MainActivity extends DiaryBaseActivity implements View.OnClickListe
                                 Intent openPicture = new Intent(Intent.ACTION_PICK, null);
                                 openPicture.setDataAndType(MediaStore.Images.Media.EXTERNAL_CONTENT_URI, IMAGE_UNSPECIFIED);
                                 startActivityForResult(openPicture, 1);
-                            }else{
+                            } else {
                                 Intent openVideo = new Intent(Intent.ACTION_PICK, null);
                                 openVideo.setDataAndType(MediaStore.Images.Media.EXTERNAL_CONTENT_URI, VIDEO_UNSPECIFIED);
                                 startActivityForResult(openVideo, 2);
@@ -435,7 +463,7 @@ public class MainActivity extends DiaryBaseActivity implements View.OnClickListe
                         }
                     });
                     listDialog.show();
-                }else{
+                } else {
                     Intent openPicture = new Intent(Intent.ACTION_PICK, null);
                     openPicture.setDataAndType(MediaStore.Images.Media.EXTERNAL_CONTENT_URI, IMAGE_UNSPECIFIED);
                     startActivityForResult(openPicture, 1);
@@ -603,6 +631,7 @@ public class MainActivity extends DiaryBaseActivity implements View.OnClickListe
 
     /**
      * 获取正常运行的存储设备路径
+     *
      * @param activity
      * @return
      */
@@ -612,8 +641,8 @@ public class MainActivity extends DiaryBaseActivity implements View.OnClickListe
             StorageManager sm = (StorageManager) activity.getSystemService(Activity.STORAGE_SERVICE);
             Method getVolumePathsMethod = StorageManager.class.getMethod("getVolumePaths");
             String[] paths = (String[]) getVolumePathsMethod.invoke(sm);
-            for(int i=0;i<paths.length;i++){
-                if(getStorageState(activity, paths[i]).equals(Environment.MEDIA_MOUNTED)){
+            for (int i = 0; i < paths.length; i++) {
+                if (getStorageState(activity, paths[i]).equals(Environment.MEDIA_MOUNTED)) {
                     storagePathList.add(paths[i]);
                 }
             }
@@ -625,6 +654,7 @@ public class MainActivity extends DiaryBaseActivity implements View.OnClickListe
 
     /**
      * 获取路径状态
+     *
      * @param activity
      * @param path
      * @return
@@ -632,7 +662,7 @@ public class MainActivity extends DiaryBaseActivity implements View.OnClickListe
     public static String getStorageState(Activity activity, String path) {
         try {
             StorageManager sm = (StorageManager) activity.getSystemService(Activity.STORAGE_SERVICE);
-            Method getVolumeStateMethod = StorageManager.class.getMethod("getVolumeState", new Class[] {String.class});
+            Method getVolumeStateMethod = StorageManager.class.getMethod("getVolumeState", new Class[]{String.class});
             String state = (String) getVolumeStateMethod.invoke(sm, path);
             return state;
         } catch (Exception e) {
