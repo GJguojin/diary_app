@@ -50,6 +50,16 @@ public class PropertiesUtil {
 
         PROPERTIES.put("use_storage","true");
         PROPERTIES_NAME.put("use_storage","使用存储");
+
+        PROPERTIES.put("default_background","/diary/defaultBitmap.jpg");
+        PROPERTIES_NAME.put("default_background","默认背景");
+
+        PROPERTIES.put("file_path","/diary/picture/");
+        PROPERTIES_NAME.put("file_path","图片路径");
+
+        PROPERTIES.put("storage_path","/diary/storage/");
+        PROPERTIES_NAME.put("storage_path","存储路径");
+
     }
 
     /**

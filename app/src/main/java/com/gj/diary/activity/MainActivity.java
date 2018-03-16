@@ -56,6 +56,7 @@ import com.gj.diary.view.DiaryChangePassDialog;
 import com.gj.diary.view.DiaryCreateDialog;
 import com.gj.diary.view.DiaryImageView;
 import com.gj.diary.view.DiaryPropertyDialog;
+import com.gj.diary.view.DiaryThemeDialog;
 
 import java.io.File;
 import java.lang.reflect.Method;
@@ -77,8 +78,8 @@ public class MainActivity extends DiaryBaseActivity implements View.OnClickListe
     private static final String TAG = "MainActivity";
     private static final String IMAGE_UNSPECIFIED = "image/*";
     private static final String VIDEO_UNSPECIFIED = "video/*";
-    public static String FILE_PATH = "/diary/日记/picture/";
-    public static String STORAGE_PATH = "/diary/日记/storage/";
+    public static String FILE_PATH = "/diary/picture/";
+    public static String STORAGE_PATH = "/diary/storage/";
     public static String DF_BITMAP_PATH = "/diary/defaultBitmap.jpg";
 
     private String diaryStartText = "";
@@ -180,18 +181,32 @@ public class MainActivity extends DiaryBaseActivity implements View.OnClickListe
         }
         actionBar.show();
 
-        String filePath = PropertiesUtil.getProperties(this, "filePath");
+
+        //图片路径
+        final String filePath = PropertiesUtil.getProperties(this, "file_path");
         if (filePath != null && !"".equals(filePath)) {
             FILE_PATH = filePath;
         } else {
+            FILE_PATH = PropertiesUtil.PROPERTIES.get("file_path");
             PropertiesUtil.saveProperties(this, "filePath", FILE_PATH);
         }
 
-        String defaultBitmapPath = PropertiesUtil.getProperties(this, "defaultBitmapPath");
+        //存储路径
+        final String storagePath = PropertiesUtil.getProperties(this, "storage_path");
+        if (storagePath != null && !"".equals(storagePath)) {
+            STORAGE_PATH = storagePath;
+        } else {
+            STORAGE_PATH = PropertiesUtil.PROPERTIES.get("storage_path");
+            PropertiesUtil.saveProperties(this, "storage_path", STORAGE_PATH);
+        }
+
+        //默认背景图片
+        String defaultBitmapPath = PropertiesUtil.getProperties(this, "default_background");
         if (defaultBitmapPath != null && !"".equals(defaultBitmapPath)) {
             DF_BITMAP_PATH = defaultBitmapPath;
         } else {
-            PropertiesUtil.saveProperties(this, "defaultBitmapPath", DF_BITMAP_PATH);
+            DF_BITMAP_PATH = PropertiesUtil.PROPERTIES.get("default_background");
+            PropertiesUtil.saveProperties(this, "default_background", DF_BITMAP_PATH);
         }
 
         diaryTextTitle =  (TextView) this.findViewById(R.id.diary_text_title);
@@ -231,7 +246,14 @@ public class MainActivity extends DiaryBaseActivity implements View.OnClickListe
         diaryVideo  = (VideoView) findViewById(R.id.diary_video);
         diaryVideoLayout = (LinearLayout)findViewById(R.id.diary_video_layout);
         diaryVideoLayout.setVisibility(View.GONE);
-        Bitmap defaultDiaryPicture = BitmapFactory.decodeResource(getResources(), R.drawable.background);
+
+        Bitmap defaultDiaryPicture = null;
+        File defaultBitmapFile = new File(rootDir, DF_BITMAP_PATH);
+        if (defaultBitmapFile.exists()) {
+            defaultDiaryPicture = BitmapFactory.decodeFile(defaultBitmapFile.getPath());
+        } else {
+            defaultDiaryPicture = BitmapFactory.decodeResource(getResources(), R.drawable.background);
+        }
         defaultDiaryPicture = getRoundedCornerBitmap(defaultDiaryPicture, 70);
         diaryPicture.setImageBitmap(defaultDiaryPicture);
         final String photoRadito = PropertiesUtil.getProperties(this, "photo_radito");
@@ -267,8 +289,9 @@ public class MainActivity extends DiaryBaseActivity implements View.OnClickListe
                 new DiaryPropertyDialog(this);
                 break;
             case R.id.chang_theme_menu:
-                final Application application = MainActivity.this.getApplication();
-
+                new DiaryThemeDialog(this);
+                break;
+               /* final Application application = MainActivity.this.getApplication();
                 final String[] items ={"庄重蓝","少女粉","深沉黑"};
                 AlertDialog.Builder builder = new AlertDialog.Builder(this);
                 // 设置参数
@@ -290,7 +313,7 @@ public class MainActivity extends DiaryBaseActivity implements View.OnClickListe
                             }
                         });
                 builder.create().show();
-                break;
+                break;*/
             default:
                 break;
         }
@@ -487,7 +510,7 @@ public class MainActivity extends DiaryBaseActivity implements View.OnClickListe
                         ImageUtil.writeMessage(file, text, 0);
                     } else if (itemId == R.id.diary_create_hide) {
                         Bitmap bmp = null;
-                        File defaultBitmapFile = new File(rootDir, "/diary/defaultBitmap.jpg");
+                        File defaultBitmapFile = new File(rootDir, DF_BITMAP_PATH);
                         if (defaultBitmapFile.exists()) {
                             bmp = BitmapFactory.decodeFile(defaultBitmapFile.getPath());
                         } else {

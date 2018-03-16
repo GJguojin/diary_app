@@ -10,6 +10,7 @@
         <item name="colorButton">@color/colorBorder_dark</item>
         <item name="colorFont">@color/colorFont_dark</item>
         <item name="android:textColor">@color/colorFont_dark</item>
+        <item name="android:editTextColor">@color/colorFont_dark</item>
     </style>
 
     <style name="BlueTheme" parent="AppTheme">
@@ -21,6 +22,7 @@
         <item name="colorButton">@color/colorBorder_blue</item>
         <item name="colorFont">@color/colorFont_blue</item>
         <item name="android:textColor">@color/colorFont_blue</item>
+        <item name="android:editTextColor">@color/colorFont_blue</item>
     </style>
 
     <style name="PinkTheme" parent="AppTheme">
@@ -31,6 +33,7 @@
         <item name="colorButton">@color/colorBorder_pink</item>
         <item name="colorFont">@color/colorFont_pink</item>
         <item name="android:textColor">@color/colorFont_pink</item>
+        <item name="android:editTextColor">@color/colorFont_pink</item>
     </style>
 
     <!-- popup window 显示消失动画-->
