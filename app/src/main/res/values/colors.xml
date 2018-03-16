@@ -20,5 +20,25 @@
     <color name="colorButton_dark">#1F1F1F</color>
     <color name="colorFont_dark">#1C1C1C</color>
 
+    <color name="colorPrimary_red">#E00000</color>
+    <color name="colorPrimaryDark_red">#980000</color>
+    <color name="colorAccent_red">#B80000</color>
+    <color name="colorBorder_red">#B80000</color>
+    <color name="colorButton_red">#E00000</color>
+    <color name="colorFont_red">#B80000</color>
+
+    <color name="colorPrimary_yellow">#FFD700</color>
+    <color name="colorPrimaryDark_yellow">#DAA520</color>
+    <color name="colorAccent_yellow">#FFC125</color>
+    <color name="colorBorder_yellow">#FFC125</color>
+    <color name="colorButton_yellow">#FFD700</color>
+    <color name="colorFont_yellow">#FFC125</color>
+
+    <color name="colorPrimary_green">#228B22</color>
+    <color name="colorPrimaryDark_green">#006400</color>
+    <color name="colorAccent_green"> #3CB371</color>
+    <color name="colorBorder_green"> #3CB371</color>
+    <color name="colorButton_green">#228B22</color>
+    <color name="colorFont_green">#3CB371</color>
 
 </resources>

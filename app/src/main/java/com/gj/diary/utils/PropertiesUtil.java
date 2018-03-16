@@ -60,6 +60,8 @@ public class PropertiesUtil {
         PROPERTIES.put("storage_path","/diary/storage/");
         PROPERTIES_NAME.put("storage_path","存储路径");
 
+        PROPERTIES.put("appTheme","");
+        PROPERTIES_NAME.put("appTheme","主题值");
     }
 
     /**

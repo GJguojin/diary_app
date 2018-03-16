@@ -37,6 +37,7 @@
             android:layout_weight="0"
             android:background="@null"
             android:ems="10"
+            android:lineSpacingMultiplier="1.2"
             android:gravity="left|top"
             android:inputType="textMultiLine"
             android:textSize="45px" />

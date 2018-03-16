@@ -52,6 +52,15 @@ public class DiaryThemeDialog {
                     case R.id.diary_theme_pink:
                         appTheme =  R.style.PinkTheme;
                         break;
+                    case R.id.diary_theme_red:
+                        appTheme =  R.style.RedTheme;
+                        break;
+                    case R.id.diary_theme_yellow:
+                        appTheme =  R.style.YellowTheme;
+                        break;
+                    case R.id.diary_theme_green:
+                        appTheme =  R.style.GreenTheme;
+                        break;
                     default:
                         appTheme = R.style.BlueTheme;
                         break;

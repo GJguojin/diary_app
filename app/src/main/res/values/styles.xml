@@ -36,6 +36,39 @@
         <item name="android:editTextColor">@color/colorFont_pink</item>
     </style>
 
+    <style name="RedTheme" parent="AppTheme">
+        <item name="colorPrimary">@color/colorPrimary_red</item>
+        <item name="colorPrimaryDark">@color/colorPrimaryDark_red</item>
+        <item name="colorAccent">@color/colorAccent_red</item>
+        <item name="colorBorder">@color/colorBorder_red</item>
+        <item name="colorButton">@color/colorBorder_red</item>
+        <item name="colorFont">@color/colorFont_red</item>
+        <item name="android:textColor">@color/colorFont_red</item>
+        <item name="android:editTextColor">@color/colorFont_red</item>
+    </style>
+
+    <style name="YellowTheme" parent="AppTheme">
+        <item name="colorPrimary">@color/colorPrimary_yellow</item>
+        <item name="colorPrimaryDark">@color/colorPrimaryDark_yellow</item>
+        <item name="colorAccent">@color/colorAccent_yellow</item>
+        <item name="colorBorder">@color/colorBorder_yellow</item>
+        <item name="colorButton">@color/colorBorder_yellow</item>
+        <item name="colorFont">@color/colorFont_yellow</item>
+        <item name="android:textColor">@color/colorFont_yellow</item>
+        <item name="android:editTextColor">@color/colorFont_yellow</item>
+    </style>
+
+    <style name="GreenTheme" parent="AppTheme">
+        <item name="colorPrimary">@color/colorPrimary_green</item>
+        <item name="colorPrimaryDark">@color/colorPrimaryDark_green</item>
+        <item name="colorAccent">@color/colorAccent_green</item>
+        <item name="colorBorder">@color/colorBorder_green</item>
+        <item name="colorButton">@color/colorBorder_green</item>
+        <item name="colorFont">@color/colorFont_green</item>
+        <item name="android:textColor">@color/colorFont_green</item>
+        <item name="android:editTextColor">@color/colorFont_green</item>
+    </style>
+
     <!-- popup window 显示消失动画-->
     <style name="PopWindowAnimStyle">
         <item name="android:windowShowAnimation">@anim/dialog_enter</item>
