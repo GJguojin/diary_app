@@ -1,15 +1,18 @@
 package com.gj.diary.holder;
 
 import android.content.Context;
+import android.content.res.Resources;
+import android.content.res.TypedArray;
 import android.graphics.Bitmap;
 import android.graphics.BitmapFactory;
+import android.graphics.drawable.Drawable;
 import android.os.Handler;
 import android.os.Message;
+import android.util.TypedValue;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.widget.ImageView;
 import android.widget.TextView;
-import android.widget.Toast;
 
 import com.gj.diary.activity.MainActivity;
 import com.gj.diary.view.DiaryImageView;
@@ -26,10 +29,12 @@ public class DiaryTreeHolder extends TreeNode.BaseNodeViewHolder<DiaryTreeHolder
     public DiaryTreeHolder(Context context) {
         super(context);
     }
-    private static Bitmap openFolder;
-    private static  Bitmap closeFolder;
-    private static Bitmap arrowDown;
-    private static  Bitmap arrowRight;
+    private static Drawable openDrawable;
+    private static Drawable closeDrawable;
+    private static Resources.Theme theme;
+
+    private static Drawable arrowDown;
+    private static  Drawable arrowRight;
 
     private  ImageView folder;
     private  ImageView arrow;
@@ -89,34 +94,48 @@ public class DiaryTreeHolder extends TreeNode.BaseNodeViewHolder<DiaryTreeHolder
         diaryFolderValue = (TextView)forderView.findViewById(R.id.diary_node_value);
         folder = (ImageView)forderView.findViewById(R.id.diary_folder);
         arrow = (ImageView) forderView.findViewById(R.id.diary_arrow);
-        if(openFolder == null){
-            openFolder = BitmapFactory.decodeResource(context.getResources(), R.drawable.folder_open);
+        if(openDrawable == null || theme == null || theme != context.getTheme()){
+            int[] attrsArray = { R.attr.drawableFolderOpen };
+            TypedArray typedArray = context.obtainStyledAttributes(attrsArray);
+            openDrawable = typedArray.getDrawable(0);
+            typedArray.recycle();
         }
-        if(closeFolder == null){
-            closeFolder = BitmapFactory.decodeResource(context.getResources(), R.drawable.folder_close);
+        if(closeDrawable == null || theme == null || theme != context.getTheme()){
+            int[] attrsArray = { R.attr.drawableFolderClose };
+            TypedArray typedArray = context.obtainStyledAttributes(attrsArray);
+            closeDrawable = typedArray.getDrawable(0);
+            typedArray.recycle();
         }
-        if(arrowDown == null){
-            arrowDown = BitmapFactory.decodeResource(context.getResources(), R.drawable.arrow_down);
+        if(arrowDown == null || theme == null || theme != context.getTheme()){
+            int[] attrsArray = { R.attr.drawableArrowDown };
+            TypedArray typedArray = context.obtainStyledAttributes(attrsArray);
+            arrowDown = typedArray.getDrawable(0);
+            typedArray.recycle();
         }
-        if(arrowRight == null){
-            arrowRight = BitmapFactory.decodeResource(context.getResources(), R.drawable.arrow_right);
+        if(arrowRight == null || theme == null || theme != context.getTheme()){
+            int[] attrsArray = { R.attr.drawableArrowRight };
+            TypedArray typedArray = context.obtainStyledAttributes(attrsArray);
+            arrowRight = typedArray.getDrawable(0);
+            typedArray.recycle();
         }
+        theme = context.getTheme();
+
         if(flag){
             if(node.isExpanded()){
-                folder.setImageBitmap(openFolder);
-                arrow.setImageBitmap(arrowDown);
+                folder.setImageDrawable(openDrawable);
+                arrow.setImageDrawable(arrowDown);
             }else{
-                folder.setImageBitmap(closeFolder);
-                arrow.setImageBitmap(arrowRight);
+                folder.setImageDrawable(closeDrawable);
+                arrow.setImageDrawable(arrowRight);
 
             }
         }else{
             if(node.isExpanded()){
-                folder.setImageBitmap(closeFolder);
-                arrow.setImageBitmap(arrowRight);
+                folder.setImageDrawable(closeDrawable);
+                arrow.setImageDrawable(arrowRight);
             }else{
-                folder.setImageBitmap(openFolder);
-                arrow.setImageBitmap(arrowDown);
+                folder.setImageDrawable(openDrawable);
+                arrow.setImageDrawable(arrowDown);
             }
         }
 

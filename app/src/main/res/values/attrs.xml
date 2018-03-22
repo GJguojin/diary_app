@@ -11,5 +11,8 @@
     <attr name="colorBorder" format="reference|color" />
     <attr name="colorButton" format="reference|color" />
     <attr name="colorFont" format="reference|color" />
-
+    <attr name="drawableFolderClose" format="reference|reference" />
+    <attr name="drawableFolderOpen" format="reference|reference" />
+    <attr name="drawableArrowDown" format="reference|reference" />
+    <attr name="drawableArrowRight" format="reference|reference" />
 </resources>

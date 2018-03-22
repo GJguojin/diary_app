@@ -10,6 +10,10 @@
         <item name="colorBorder">@color/colorBorder_dark</item>
         <item name="colorButton">@color/colorBorder_dark</item>
         <item name="colorFont">@color/colorFont_dark</item>
+        <item name="drawableFolderClose">@drawable/folder_close_dark</item>
+        <item name="drawableFolderOpen">@drawable/folder_open_dark</item>
+        <item name="drawableArrowDown">@drawable/arrow_down_dark</item>
+        <item name="drawableArrowRight">@drawable/arrow_right_dark</item>
         <item name="android:textColor">@color/colorFont_dark</item>
         <item name="android:editTextColor">@color/colorFont_dark</item>
     </style>
@@ -22,6 +26,10 @@
         <item name="colorBorder">@color/colorBorder_blue</item>
         <item name="colorButton">@color/colorBorder_blue</item>
         <item name="colorFont">@color/colorFont_blue</item>
+        <item name="drawableFolderClose">@drawable/folder_close_blue</item>
+        <item name="drawableFolderOpen">@drawable/folder_open_blue</item>
+        <item name="drawableArrowDown">@drawable/arrow_down_blue</item>
+        <item name="drawableArrowRight">@drawable/arrow_right_blue</item>
         <item name="android:textColor">@color/colorFont_blue</item>
         <item name="android:editTextColor">@color/colorFont_blue</item>
     </style>
@@ -33,6 +41,10 @@
         <item name="colorBorder">@color/colorBorder_pink</item>
         <item name="colorButton">@color/colorBorder_pink</item>
         <item name="colorFont">@color/colorFont_pink</item>
+        <item name="drawableFolderClose">@drawable/folder_close_pink</item>
+        <item name="drawableFolderOpen">@drawable/folder_open_pink</item>
+        <item name="drawableArrowDown">@drawable/arrow_down_pink</item>
+        <item name="drawableArrowRight">@drawable/arrow_right_pink</item>
         <item name="android:textColor">@color/colorFont_pink</item>
         <item name="android:editTextColor">@color/colorFont_pink</item>
     </style>
@@ -44,6 +56,10 @@
         <item name="colorBorder">@color/colorBorder_red</item>
         <item name="colorButton">@color/colorBorder_red</item>
         <item name="colorFont">@color/colorFont_red</item>
+        <item name="drawableFolderClose">@drawable/folder_close_red</item>
+        <item name="drawableFolderOpen">@drawable/folder_open_red</item>
+        <item name="drawableArrowDown">@drawable/arrow_down_red</item>
+        <item name="drawableArrowRight">@drawable/arrow_right_red</item>
         <item name="android:textColor">@color/colorFont_red</item>
         <item name="android:editTextColor">@color/colorFont_red</item>
     </style>
@@ -55,6 +71,10 @@
         <item name="colorBorder">@color/colorBorder_yellow</item>
         <item name="colorButton">@color/colorBorder_yellow</item>
         <item name="colorFont">@color/colorFont_yellow</item>
+        <item name="drawableFolderClose">@drawable/folder_close_yellow</item>
+        <item name="drawableFolderOpen">@drawable/folder_open_yellow</item>
+        <item name="drawableArrowDown">@drawable/arrow_down_yellow</item>
+        <item name="drawableArrowRight">@drawable/arrow_right_yellow</item>
         <item name="android:textColor">@color/colorFont_yellow</item>
         <item name="android:editTextColor">@color/colorFont_yellow</item>
     </style>
@@ -66,6 +86,10 @@
         <item name="colorBorder">@color/colorBorder_green</item>
         <item name="colorButton">@color/colorBorder_green</item>
         <item name="colorFont">@color/colorFont_green</item>
+        <item name="drawableFolderClose">@drawable/folder_close_green</item>
+        <item name="drawableFolderOpen">@drawable/folder_open_green</item>
+        <item name="drawableArrowDown">@drawable/arrow_down_green</item>
+        <item name="drawableArrowRight">@drawable/arrow_right_green</item>
         <item name="android:textColor">@color/colorFont_green</item>
         <item name="android:editTextColor">@color/colorFont_green</item>
     </style>
