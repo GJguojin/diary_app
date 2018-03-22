@@ -40,7 +40,7 @@
             android:layout_height="match_parent"
             android:layout_marginLeft="20dp"
             android:textColor="#FFFFFF"
-            android:textSize="@dimen/actionbar_text_size" />
+            android:textSize="25sp" />
 
         <TextView
             android:id="@+id/index_image_text"
