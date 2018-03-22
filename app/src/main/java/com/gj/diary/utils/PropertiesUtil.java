@@ -65,6 +65,9 @@ public class PropertiesUtil {
 
         PROPERTIES.put("query_salt","false");
         PROPERTIES_NAME.put("query_salt","查看产品秘钥");
+
+        PROPERTIES.put("diary_text_font","15");
+        PROPERTIES_NAME.put("diary_text_font","正文字体大小");
     }
 
     /**

@@ -20,7 +20,7 @@
             android:layout_height="wrap_content"
             android:textColor="?colorFont"
             android:text="普通生成"
-            android:textSize="18dp"
+            android:textSize="18sp"
             android:checked="true"/>
 
         <RadioButton
@@ -28,7 +28,7 @@
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:textColor="?colorFont"
-            android:textSize="18dp"
+            android:textSize="18sp"
             android:text="隐藏生成" />
 
         <RadioButton
@@ -36,7 +36,7 @@
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:textColor="?colorFont"
-            android:textSize="18dp"
+            android:textSize="18sp"
             android:text="切割生成" />
 
         <RadioButton
@@ -44,7 +44,7 @@
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:textColor="?colorFont"
-            android:textSize="18dp"
+            android:textSize="18sp"
             android:text="加密储存" />
     </RadioGroup>
 

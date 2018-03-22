@@ -18,17 +18,19 @@
         <TextView
             android:id="@+id/diary_text_title"
             android:layout_width="match_parent"
-            android:layout_height="25dp"
+            android:layout_height="wrap_content"
+            android:lineSpacingMultiplier="1.2"
             android:layout_weight="0"
             android:text="2050年的自己："
-            android:textSize="45px" />
+            android:textSize="16sp" />
 
         <TextView
             android:id="@+id/diary_text_start"
             android:layout_width="match_parent"
-            android:layout_height="25dp"
+            android:layout_height="wrap_content"
+            android:lineSpacingMultiplier="1.2"
             android:layout_weight="0"
-            android:textSize="45px" />
+            android:textSize="15sp" />
 
         <EditText
             android:id="@+id/diary_text_content"
@@ -40,7 +42,7 @@
             android:lineSpacingMultiplier="1.2"
             android:gravity="left|top"
             android:inputType="textMultiLine"
-            android:textSize="45px" />
+            android:textSize="15sp" />
     </LinearLayout>
 
 

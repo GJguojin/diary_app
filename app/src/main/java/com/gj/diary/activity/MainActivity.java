@@ -33,6 +33,7 @@ import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
 import android.text.Editable;
 import android.util.Log;
+import android.util.TypedValue;
 import android.view.Gravity;
 import android.view.Menu;
 import android.view.MenuItem;
@@ -206,6 +207,15 @@ public class MainActivity extends DiaryBaseActivity implements View.OnClickListe
             PropertiesUtil.saveProperties(this, "storage_path", STORAGE_PATH);
         }
 
+        float fontSize = 15.0f;
+        final String fontSizeString = PropertiesUtil.getProperties(this, "diary_text_font");
+        if (fontSizeString != null && !"".equals(fontSizeString)) {
+            fontSize = Float.parseFloat(fontSizeString);
+        }else{
+            fontSize =  Float.parseFloat(PropertiesUtil.PROPERTIES.get("diary_text_font"));
+            PropertiesUtil.saveProperties(this, "diary_text_font", ""+fontSize);
+        }
+
         //默认背景图片
         String defaultBitmapPath = PropertiesUtil.getProperties(this, "default_background");
         if (defaultBitmapPath != null && !"".equals(defaultBitmapPath)) {
@@ -222,6 +232,7 @@ public class MainActivity extends DiaryBaseActivity implements View.OnClickListe
         } else {
             diaryTextTitle.setText(PropertiesUtil.PROPERTIES.get("diary_text_title"));
         }
+        diaryTextTitle.setTextSize(TypedValue.COMPLEX_UNIT_SP,fontSize+1);
 
         //设置日记时间
         diaryTextStartText = (TextView) this.findViewById(R.id.diary_text_start);
@@ -231,6 +242,7 @@ public class MainActivity extends DiaryBaseActivity implements View.OnClickListe
         } else {
             diaryStartText = "\t\t\t\t" + PropertiesUtil.PROPERTIES.get("diary_text_start");
         }
+        diaryTextStartText.setTextSize(TypedValue.COMPLEX_UNIT_SP,fontSize);
 
         Date date = new Date();
         String format = sdf.format(date);
@@ -239,6 +251,7 @@ public class MainActivity extends DiaryBaseActivity implements View.OnClickListe
         diaryTextStartText.setOnClickListener(this);
 
         diaryTextContent = (EditText) this.findViewById(R.id.diary_text_content);
+        diaryTextContent.setTextSize(TypedValue.COMPLEX_UNIT_SP,fontSize);
 
         //生成日记方法
         dirayCreateButton = (Button) this.findViewById(R.id.diray_create);
