@@ -28,7 +28,8 @@
             android:layout_width="wrap_content"
             android:layout_height="match_parent"
             android:src="@mipmap/icon_back"
-            android:paddingLeft="16dp"
+            android:paddingLeft="8dp"
+            android:textColor="#FFFFFF"
             android:scaleType="centerInside"/>
 
         <TextView
@@ -38,6 +39,7 @@
             android:layout_width="match_parent"
             android:layout_height="match_parent"
             android:layout_marginLeft="20dp"
+            android:textColor="#FFFFFF"
             android:textSize="@dimen/actionbar_text_size" />
 
         <TextView
@@ -47,6 +49,7 @@
             android:layout_height="match_parent"
             android:text="2017-07-01"
             android:layout_marginRight="16dp"
+            android:textColor="#FFFFFF"
             android:textSize="@dimen/actionbar_text_size" />
 
     </LinearLayout>

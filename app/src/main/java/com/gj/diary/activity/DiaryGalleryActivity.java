@@ -2,8 +2,10 @@ package com.gj.diary.activity;
 
 import android.os.Bundle;
 import android.support.v4.view.ViewPager;
+import android.support.v7.app.ActionBar;
 import android.text.TextUtils;
 import android.view.View;
+import android.view.Window;
 import android.view.animation.Animation;
 import android.view.animation.AnimationUtils;
 import android.widget.ImageView;
@@ -14,6 +16,7 @@ import android.widget.Toast;
 import com.gj.diary.R;
 import com.gj.diary.adapter.GalleryPagerAdapter;
 import com.gj.diary.utils.DisplayUtils;
+import com.gj.diary.utils.PropertiesUtil;
 import com.gj.diary.view.gallery.DraftFinishView;
 import com.gj.diary.view.gallery.GalleryViewPager;
 import com.gj.diary.view.gallery.ZoomImageView;
@@ -43,6 +46,11 @@ public class DiaryGalleryActivity extends DiaryBaseActivity {
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
+        final String appTheme = PropertiesUtil.getProperties(this, "appTheme");
+        if (appTheme != null && !"".equals(appTheme)) {
+            this.setTheme(Integer.parseInt(appTheme));
+        }
+        getSupportActionBar().hide();
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_gallery);
         initView();

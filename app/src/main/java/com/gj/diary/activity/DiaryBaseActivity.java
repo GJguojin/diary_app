@@ -6,6 +6,7 @@ import android.support.v7.app.AppCompatActivity;
 import android.view.MenuItem;
 
 import com.gj.diary.MyApp;
+import com.gj.diary.utils.PropertiesUtil;
 
 /**
  * Created by baiyin on 2016/5/30.

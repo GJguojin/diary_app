@@ -4,7 +4,7 @@
     <dimen name="activity_vertical_margin">16dp</dimen>
 
     <dimen name="common_layout_height">45dp</dimen>
-    <dimen name="actionbar_text_size">17sp</dimen>
+    <dimen name="actionbar_text_size">20sp</dimen>
     <dimen name="fab_margin">16dp</dimen>
     <dimen name="divider_height">0.5dp</dimen>
 
