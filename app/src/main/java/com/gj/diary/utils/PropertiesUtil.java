@@ -29,6 +29,8 @@ public class PropertiesUtil {
 
     public static String diaryPassword;
 
+    public static boolean hasFingerprint= false;
+
 
     private final static String CONFIG_NAME="diaryConfig.properties";
 
@@ -68,6 +70,9 @@ public class PropertiesUtil {
 
         PROPERTIES.put("diary_text_font","15");
         PROPERTIES_NAME.put("diary_text_font","正文字体大小");
+
+        PROPERTIES.put("use_fingerprint","false");
+        PROPERTIES_NAME.put("use_fingerprint","使用指纹解锁");
     }
 
     /**

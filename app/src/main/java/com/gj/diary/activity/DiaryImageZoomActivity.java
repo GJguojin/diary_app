@@ -36,6 +36,11 @@ public class DiaryImageZoomActivity extends DiaryBaseActivity {
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
+        final String appTheme = PropertiesUtil.getProperties(this, "appTheme");
+        if (appTheme != null && !"".equals(appTheme)) {
+            this.setTheme(Integer.parseInt(appTheme));
+        }
+        setContentView(R.layout.activity_main);
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_image_zoom);
         initView();
@@ -71,7 +76,7 @@ public class DiaryImageZoomActivity extends DiaryBaseActivity {
         getSupportActionBar().setTitle(titleName);
 
         if (imageType.equals("url")) {
-            if (PropertiesUtil.diaryPassword != null) {
+            if (PropertiesUtil.diaryPassword != null || PropertiesUtil.hasFingerprint) {
                 try {
                     Map<String, String> message = ImageUtil.getMessage(imageResource);
                     String keyString = message.get("key");

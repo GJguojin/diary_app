@@ -261,7 +261,7 @@ public class DiaryQueryActivity extends DiaryBaseActivity  {
             DiaryTreeHolder.DiaryTreeItem diaryTreeItem = (DiaryTreeHolder.DiaryTreeItem) value;
             if (node.isLeaf()) {
                 nowDiaryTreeItem = diaryTreeItem;
-                if (PropertiesUtil.diaryPassword == null) {
+                if (PropertiesUtil.diaryPassword == null && !PropertiesUtil.hasFingerprint) {
                     DiaryLoginDialog diaryLoginDialog = new DiaryLoginDialog(context,"1");
                     diaryLoginDialog.show();
                 }else{
